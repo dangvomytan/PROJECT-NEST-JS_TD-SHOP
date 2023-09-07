@@ -2,21 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { cartItemApi } from '../../models/cartItem.Model';
 import { ICart } from '../../models/cart.Model';
 import { IUser } from '../../models/user.Model';
+import { Toaster, toast } from 'react-hot-toast';
+import { OrderApi } from '../../models/order.Model';
+import { useNavigate } from 'react-router-dom';
 
 const CheckoutComponent: React.FC = () => {
-  const [selectedPayment, setSelectedPayment] = useState('');
   const [cart, setCart] = useState<ICart[]>([]);
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({});
 
   const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
   if (userLogin === null) {
     window.location.href = '/login';
   }
 
+  const [formData, setFormData] = useState({
+    email:userLogin?.email ||'',
+    name:userLogin?.first_Name+' '+userLogin?.last_Name  ||'',
+    address:"",
+    phone:"",
+    method:"",
+    status:0,
+  });
+
   const handleCallData = async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const DataApi: any = await cartItemApi.getCartItemByCart(userLogin?.tbl_cart.id) || null;
+    const DataApi: any = await cartItemApi.getCartItemByUser(userLogin?.id) || null;
     setCart(DataApi);
   };
   useEffect(() => {
@@ -34,11 +45,42 @@ const CheckoutComponent: React.FC = () => {
         [name]: value,
       });
     };
-    console.log(formData);
-    
+     const clickOrder = async () => {
+      if(cart.length>0 && userLogin)
+      {
+      const order = {    
+        address: formData.address,
+        phone: Number(formData.phone),
+        method: formData.method,
+        status: formData.status,
+        user_Id: userLogin?.id
+      }
+
+      try {
+        await OrderApi.createOrder({cart, order});
+        handleCallData()
+        const notify = () => toast.success("Successfully deleted !");
+        notify();
+        navigate('/payment');
+      }
+      catch (error: any) {
+        const notify = () => toast.error("Error ");
+        notify();
+      }
+    }
+    else
+    {
+      const notify = () => toast.error("please select products add to cart");
+      notify();
+    }
+    }
 
   return (
     <>
+          <Toaster
+        position="bottom-right"
+        reverseOrder={false}
+      />
       <div className='bg-white'>
         <div className="max-w-6xl m-auto flex flex-col items-center border-b bg-white py-4 sm:flex-row sm:px-10 lg:px-20 xl:px-32">
           <a href="#" className="text-2xl font-bold text-gray-800">Checkout</a>
@@ -100,7 +142,9 @@ const CheckoutComponent: React.FC = () => {
                 </div>
               )
             })}
-
+            {
+              cart.length == 0 && <p> No product</p>
+            }
           </div>
         </div>
         <div className="w-3/5 bg-gray-50 px-4 pt-8 lg:mt-0">
@@ -114,6 +158,8 @@ const CheckoutComponent: React.FC = () => {
               name="email"
               className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" 
               placeholder="your.email@gmail.com" 
+              value={formData?.email}
+              readOnly
               onChange={handleChange}
               />
               <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
@@ -130,6 +176,7 @@ const CheckoutComponent: React.FC = () => {
               id="name" name="full_Name" 
               className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" 
               placeholder="Your full name here" 
+              value={formData?.name}
               onChange={handleChange}
               />
               <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
@@ -146,6 +193,7 @@ const CheckoutComponent: React.FC = () => {
               type="text" 
               id="address" 
               name="address" 
+              value={formData?.address}
               className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm  shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" 
               placeholder="Your address here" 
               onChange={handleChange}
@@ -165,7 +213,8 @@ const CheckoutComponent: React.FC = () => {
                 <input 
                 type="tel" 
                 id="phone" 
-                name="phone" 
+                name="phone"
+                value={formData?.phone} 
                 className="w-full rounded-md border border-gray-200 px-2 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" 
                 placeholder="Phone"
                 onChange={handleChange}
@@ -185,9 +234,11 @@ const CheckoutComponent: React.FC = () => {
                 <select 
                 className="w-full rounded-md border border-gray-200 px-2 py-3 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" 
                 onChange={handleChange}
+                name= "method"
+                value={formData.method}
                 >
                   <option>--- Select ---</option>
-                  <option>card</option>
+                  <option value="card">card</option>
                 </select>
               </div>
             </div>
@@ -208,7 +259,9 @@ const CheckoutComponent: React.FC = () => {
               <p className="text-2xl font-semibold text-gray-900">$408.00</p>
             </div>
           </div>
-          <button className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place Order</button>
+          <button 
+          onClick={()=>clickOrder()}
+          className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place Order</button>
         </div>
       </div>
 

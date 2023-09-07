@@ -10,6 +10,7 @@ import RequireLogin from "../middleware/RequireLogin/RequireLogin";
 import DetailComponent from "../components/detail/Detail.Component";
 import CheckoutComponent from "../components/checkout/Checkout.Component";
 import CartComponent from "../components/cart/Cart.Component";
+import PaymentComponent from "../components/payment/Payment.Component";
 
 const Router = () => {
   return (
@@ -25,6 +26,7 @@ const Router = () => {
         <Route path="product/detail" element={<DetailComponent/>} />
         <Route path="cart" element={<CartComponent/>} />
         <Route path="checkout" element={<CheckoutComponent/>} />
+        <Route path="payment" element={<PaymentComponent/>} />
       </Route>
       {/* </Route> */}
      

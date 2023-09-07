@@ -46,7 +46,6 @@ const ProductListComponent: React.FC = () => {
       handleCallData();
     }, []);
 
-
   return (
 <div className="bg-white">
       <div>

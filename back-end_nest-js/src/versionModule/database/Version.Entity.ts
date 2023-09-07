@@ -4,8 +4,7 @@ import { OrderItemEntity } from "../../orderItemModule/database/OrderItem.Entity
 import { CartItemEntity } from "src/cartItemModule/database/CartItem.Entity";
 
 @Entity('tbl_version')
-export class VersionEntity
-{
+export class VersionEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -17,7 +16,7 @@ export class VersionEntity
 
     @Column()
     inventory: number;
-    
+
     @Column('text')
     image: string;
 
@@ -26,34 +25,34 @@ export class VersionEntity
 
     @Column()
     is_Delete: number;
-    
+
     @Column('text')
     description: string | null;
 
     @CreateDateColumn()
-    createdAt:Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updatedAt:Date;
+    updatedAt: Date;
 
     // version => product
     @Column()
     product_Id: number;
-    @ManyToOne(()=>ProductEntity,(product)=>product.tbl_versions)
-    @JoinColumn({name: 'product_Id'})
-    tbl_product:ProductEntity;
-
-    // version => order item
-    @OneToOne(()=>OrderItemEntity,(version)=>version.tbl_version,{
-        onDelete:'CASCADE',
-        onUpdate: 'CASCADE',
-    })
-    tbl_orderitem:OrderItemEntity;
+    @ManyToOne(() => ProductEntity, (product) => product.tbl_versions)
+    @JoinColumn({ name: 'product_Id' })
+    tbl_product: ProductEntity;
 
     // version => cart item
-    @OneToOne(()=>CartItemEntity,(cartitem)=>cartitem.tbl_version,{
-        onDelete:'CASCADE',
+    @OneToMany(() => CartItemEntity, (cartitem) => cartitem.tbl_version, {
+        onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
-    tbl_cartitem:CartItemEntity;
+    tbl_cartitem: CartItemEntity[];
+
+    // version => order item
+    @OneToMany(() => OrderItemEntity, (cartitem) => cartitem.tbl_version, {
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    })
+    tbl_orderitem: OrderItemEntity[];
 }

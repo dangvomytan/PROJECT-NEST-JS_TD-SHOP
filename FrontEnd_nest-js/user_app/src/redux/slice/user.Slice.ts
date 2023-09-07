@@ -3,22 +3,24 @@ import { UserApi } from "../../models/user.Model";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const login = createAsyncThunk("auth/login", async (loginData: any) => {
-    try {
-        const res = await UserApi.login(loginData);
-        if (res.data.is_Delete === 0) {
-            localStorage.setItem("userLogin", JSON.stringify(res.data));
-            localStorage.setItem("accessToken", res.accessToken);
-            return res;
-        }
-        else
-        {
-            // eslint-disable-next-line no-global-assign
-            return {msg:"Email lock"}
-        }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error:any) {
-        return {msg:error.response.statusText, codeStatus:error.response.status};
-    }
+    // try {
+    //     // const res = await UserApi.login(loginData);
+    //     console.log(res);
+        
+    //     if (res.data.is_Delete === 0) {
+    //         localStorage.setItem("userLogin", JSON.stringify(res.data));
+    //         localStorage.setItem("accessToken", res.accessToken);
+    //         return res;
+    //     }
+    //     else
+    //     {
+    //         // eslint-disable-next-line no-global-assign
+    //         return {msg:"Email lock"}
+    //     }
+    // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // } catch (error:any) {
+    //     return {msg:error.response.statusText, codeStatus:error.response.status};
+    // }
 });
 const userSlice = createSlice({
     name: "user",

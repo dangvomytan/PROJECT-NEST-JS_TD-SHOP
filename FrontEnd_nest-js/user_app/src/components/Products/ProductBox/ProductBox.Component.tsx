@@ -8,26 +8,30 @@ import { Toaster, toast } from "react-hot-toast";
 
 const ProductBoxComponent: React.FC<ProductGridProps> = (props) => {
   const navigate = useNavigate();
-  const product = props.product
+  const productItem = props.product
 
   //xu ly them product vaof gio hang
-  const clickAddToCart = async (product: any) => {
+  const clickAddToCart = async (item: any) => {
     const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
+
+    console.log(productItem);
+    
+    
     if (userLogin !== null) {
-      const cart_Id = userLogin.tbl_cart.id;
-      const item = {
-        cart_Id: Number(cart_Id),
-        product_Id: product.product_Id,
-        version_Id: product.id,
+      const user_Id = userLogin.id;
+      const addItem = {
+        user_Id: Number(user_Id),
+        product_Id: item.product_Id,
+        version_Id: item.id,
         quantity: 1
       }
       try {
-        await cartItemApi.addToCart(item)
+        await cartItemApi.addToCart(addItem)
         const notify = () => toast.success("Add to cart successfully");
         notify();
       }
       catch (error: any) {
-        console.log(error.message);
+        // console.log(error.message);
         const notify = () => toast.error(error.message);
         notify();
       }
@@ -50,14 +54,14 @@ const ProductBoxComponent: React.FC<ProductGridProps> = (props) => {
       <div className="relative my-3 w-full max-w-xs overflow-hidden rounded-lg shadow-md hover:scale-105 transition duration-100 ease-in-out ">
 
         <div className="cursor-pointer"
-          onClick={() => clickViewDetail(product)}>
-          <img className="h-60 w-full text-center rounded-t-lg object-contain  object-center" src={product.image} />
+          onClick={() => clickViewDetail(productItem)}>
+          <img className="h-60 w-full text-center rounded-t-lg object-contain  object-center" src={productItem.image} />
         </div>
         {/* <span className="absolute top-0 left-0 w-28 translate-y-4 -translate-x-6 -rotate-45 bg-black text-center text-sm text-white">Sale</span> */}
         <div className="mt-4 px-5 pb-5">
           <div className="cursor-pointer"
-            onClick={() => clickViewDetail(product)}>
-            <h5 className="text-xl font-semibold tracking-tight text-slate-900">{product.tbl_product.product_Name} {product.version_Name}</h5>
+            onClick={() => clickViewDetail(productItem)}>
+            <h5 className="text-xl font-semibold tracking-tight text-slate-900">{productItem.tbl_product.product_Name} {productItem.version_Name}</h5>
           </div>
           <div className="mt-2.5 mb-5 flex items-center">
             <span className="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">5.0</span>
@@ -79,11 +83,11 @@ const ProductBoxComponent: React.FC<ProductGridProps> = (props) => {
           </div>
           <div className="flex items-center justify-between">
             <p>
-              <span className="text-3xl font-bold text-slate-900">$ {product.price}</span>
+              <span className="text-3xl font-bold text-slate-900">$ {productItem.price}</span>
               {/* <span className="text-sm text-slate-900 line-through">$299</span> */}
             </p>
             <button className="flex items-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
-              onClick={() => clickAddToCart(product)}
+              onClick={() => clickAddToCart(productItem)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />

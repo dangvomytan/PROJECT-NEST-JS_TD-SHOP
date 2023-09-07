@@ -18,15 +18,15 @@ const CartComponent: React.FC = () => {
   const navigate = useNavigate();
 
   const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
+
   if (userLogin === null) {
     window.location.href = '/login';
   }
-  // console.log(userLogin?.tbl_cart.id);
-
-
+  // console.log(userLogin?.id);
+ 
   const handleCallData = async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const DataApi: any = await cartItemApi.getCartItemByCart(userLogin?.tbl_cart.id) || null;
+    const DataApi: any = await cartItemApi.getCartItemByUser(userLogin?.id) || null;
     setCart(DataApi);
   };
   useEffect(() => {
@@ -64,11 +64,12 @@ const CartComponent: React.FC = () => {
       setItemDel(item);
     }
   }
+
   //handle update quantity
   const updateCartToServer = async (id: number, qty: number) => {
-    const itemUpdate = { quantity: qty };
+    const itemUpdate = { id:id, quantity: qty };
     try {
-      await cartItemApi.updateQuantiyCartItemById(id, itemUpdate);
+      await cartItemApi.updateQuantiyCartItem(itemUpdate);
       handleCallData()
       const notify = () => toast.success("Successfully update !");
       notify();
@@ -103,11 +104,13 @@ const CartComponent: React.FC = () => {
     setItemDel(item);
   }
 
-
+ console.log(22,cart);
+ 
   //handle xoa item trong cart
   const handleDelCartItem = async (item: ICartItem) => {
+    const itemId = item.id;
     try {
-      await cartItemApi.deleteCartItemById(item.id);
+      await cartItemApi.deleteCartItem(itemId);
       handleCallData()
       const notify = () => toast.success("Successfully deleted !");
       notify();
@@ -117,6 +120,8 @@ const CartComponent: React.FC = () => {
       notify();
     }
   }
+
+
   const clickCheckOut = () => {
     if (cart.length === 0) {
       const notify = () => toast.error("please select products add to cart");
@@ -125,7 +130,6 @@ const CartComponent: React.FC = () => {
     }
     else {
       navigate('/checkout');
-
     }
   }
 

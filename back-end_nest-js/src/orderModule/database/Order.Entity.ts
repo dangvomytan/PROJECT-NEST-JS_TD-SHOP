@@ -2,7 +2,7 @@
 import { OrderItemEntity } from "src/orderItemModule/database/OrderItem.Entity";
 import { UserEntity } from "src/userModule/database/User.Entity";
 
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('tbl_order')
 export class OrderEntity{
@@ -30,7 +30,7 @@ export class OrderEntity{
     // order => user
     @Column()
     user_Id:number;
-    @OneToOne(()=>UserEntity,(user)=>user.tbl_order)
+    @OneToMany(()=>UserEntity,(user)=>user.tbl_order)
     @JoinColumn({name: 'user_Id'})
     tbl_user:UserEntity;
     

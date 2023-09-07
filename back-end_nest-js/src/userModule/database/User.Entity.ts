@@ -1,8 +1,9 @@
 
+import { Exclude, Transform } from "class-transformer";
 import { CartItemEntity } from "src/cartItemModule/database/CartItem.Entity";
 import { OrderEntity } from "src/orderModule/database/Order.Entity";
 
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 @Entity('tbl_user')
@@ -14,12 +15,14 @@ export class UserEntity
     @Column()
     first_Name: string;
 
+    @Transform((user)=>user.value.toUpperCase())
     @Column()
     last_Name: string;
 
     @Column()
     email: string;
 
+    @Exclude()
     @Column()
     password: string;
 
@@ -33,17 +36,17 @@ export class UserEntity
     updatedAt:Date;
 
     // user => cart item
-    @OneToOne(() => CartItemEntity,(cartItem)=>cartItem.tbl_user,{
+    @OneToMany(() => CartItemEntity,(cartItem)=>cartItem.tbl_user,{
         onDelete:'CASCADE',
         onUpdate:'CASCADE',
     })
-    tbl_cartItem: CartItemEntity;
+    tbl_cartItem: CartItemEntity[];
     
     // user => order
-    @OneToOne(() => OrderEntity,(order)=>order.tbl_user,
+    @OneToMany(() => OrderEntity,(order)=>order.tbl_user,
     {
         onDelete:'CASCADE',
         onUpdate:'CASCADE',
     })
-    tbl_order:OrderEntity;
+    tbl_order:OrderEntity[];
 }

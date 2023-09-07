@@ -49,18 +49,18 @@ const DetailComponent: React.FC = () => {
         setChangeVer(ver);
     }
 
-    const clickAddToCart = async (product: any) => {
+    const clickAddToCart = async (item: any) => {
         const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
         if (userLogin !== null) {
-            const cart_Id = userLogin.tbl_cart.id;
-            const item = {
-                cart_Id: Number(cart_Id),
-                product_Id: product.product_Id,
-                version_Id: product.id,
-                quantity: quantity
+            const user_Id = userLogin.id;
+            const addItem = {
+                quantity: quantity,
+                user_Id: Number(user_Id),
+                product_Id: item.product_Id,
+                version_Id: item.id
             }
             try {
-                await cartItemApi.addToCart(item)
+                await cartItemApi.addToCart(addItem)
                 const notify = () => toast.success("Add to cart successfully");
                 notify();
             }
