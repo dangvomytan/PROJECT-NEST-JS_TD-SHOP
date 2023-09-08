@@ -103,37 +103,11 @@ const PaymentComponent: React.FC = () => {
       </div>
 
       <div className=" max-w-5xl m-auto flex justify-between gap-3 mt-3 sm:px-10 lg:grid-cols-2 lg:px-10 xl:px-10">
-        <div className="w-2/5 px- pt-8  bg-white">
-          {/* <p className="text-xl font-medium px-4">Cart</p> */}
-          <div className="mt-8 space-y-3 rounded-lg bg-white px-2 py-4 sm:px-6">
+        <div className="w-full px- py-8  bg-white">
+          <p className="text-xl text-center font-medium px-4">Thanks order</p>
 
-            {cart.length > 0 && cart.map((item) => {
-              return (
-                <div key={item.id}
-                  className="flex flex-col rounded-lg bg-white sm:flex-row">
-                  <img className="m-2 h-24 w-28 rounded-md border object-cover object-center"
-                    src={item.tbl_version.image} alt="" />
-                  <div className="flex w-full flex-col px-4 py-4">
-                    <span className="font-semibold">{item.tbl_product.product_Name} {item.tbl_version.version_Name}</span>
-                    <span className="float-right text-gray-400">Quantity: {item.quantity}</span>
-                    <p className="text-lg font-bold">$ {item.quantity * item.tbl_version.price}</p>
-                  </div>
-                </div>
-              )
-            })}
-            {
-              cart.length == 0 && <p> No product</p>
-            }
-          </div>
         </div>
-        <div className="w-3/5 bg-gray-50 px-4 pt-8 lg:mt-0">
-          <p className="text-xl font-medium">Payment Details</p>
-
-
-          <button 
-          onClick={()=>clickOrder()}
-          className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place Order</button>
-        </div>
+      
       </div>
 
     </>

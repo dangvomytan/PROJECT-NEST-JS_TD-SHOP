@@ -232,10 +232,10 @@ const DetailComponent: React.FC = () => {
                                     onClick={() => clickAddToCart(changeVer)}
                                     className="w-full p-4 bg-orange-500 rounded-md lg:w-2/5 dark:text-gray-200 text-gray-50 hover:bg-orange-600 dark:bg-orange-500 dark:hover:bg-orange-700">
                                     Add to cart</button>
-                                <button
+                                <a href="/cart"
                                     className="flex items-center justify-center w-full p-4 text-orange-500 border border-orange-500 rounded-md lg:w-2/5 dark:text-gray-200 dark:border-orange-600 hover:bg-orange-600 hover:border-orange-600 hover:text-gray-100 dark:bg-orange-500 dark:hover:bg-orange-700 dark:hover:border-orange-700 dark:hover:text-gray-300">
-                                    Buy Now
-                                </button>
+                                    Go to cart
+                                </a>
                             </div>
                         </div>
                     </div>

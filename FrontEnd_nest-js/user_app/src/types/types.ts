@@ -1,7 +1,9 @@
 import { IProduct } from "../models/product.Model";
 
 export interface ProductProps {
+    totalItems: any;
     productAPI: any;
+    totalPages: any;
 }
 
 export interface ProductGridProps {

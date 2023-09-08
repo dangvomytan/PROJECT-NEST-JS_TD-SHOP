@@ -2,8 +2,10 @@ import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
-import ProductGridComponent from '../ProductGrid/ProductGrid.Component'
-import { IProduct, ProductApi } from '../../../models/product.Model'
+import { ProductApi } from '../../../models/product.Model'
+import PaginationComponent from '../../pagination/Pagination.Component'
+import { useDispatch } from 'react-redux'
+import { setProducts } from '../../../redux/slice/product.Slice'
 
 const sortOptions = [
   { name: 'Most Popular', href: '#', current: true },
@@ -28,26 +30,14 @@ function classNames(...classes: string[]) {
 
 const ProductListComponent: React.FC = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [productApi, setProductApi] = useState<any[]>([]);
 
-      //HANDEL GOI API
-      const handleCallData = async () => {
-        try {
-          const dataApi = await ProductApi.getAllProVer() || null;
-          setProductApi(dataApi.filter((item: IProduct) => item.is_Delete === 0));
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
+  const [dataProduct, setDataProduct] =  useState({})
 
 
-    // useEffect GOI HAM LAY DU LIEU API
-    useEffect(() => {
-      handleCallData();
-    }, []);
+
 
   return (
-<div className="bg-white">
+    <div className="bg-white">
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -169,7 +159,7 @@ const ProductListComponent: React.FC = () => {
                 <Transition
                   as={Fragment}
                   enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"  
+                  enterFrom="transform opacity-0 scale-95"
                   enterTo="transform opacity-100 scale-100"
                   leave="transition ease-in duration-75"
                   leaveFrom="transform opacity-100 scale-100"
@@ -278,9 +268,9 @@ const ProductListComponent: React.FC = () => {
               <div className="lg:col-span-3">
                 {/* //================================================================
                 // === SHOW PRODUCT === */}
-                <ProductGridComponent  productAPI={productApi}/>
+                <PaginationComponent/>
                 {/* //================================================================ */}
-                </div>
+              </div>
             </div>
           </section>
         </main>

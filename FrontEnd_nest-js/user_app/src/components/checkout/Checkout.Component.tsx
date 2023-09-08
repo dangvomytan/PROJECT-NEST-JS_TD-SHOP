@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 const CheckoutComponent: React.FC = () => {
   const [cart, setCart] = useState<ICart[]>([]);
+  const [subTotal, setSubTotal] = useState<number>(0);
   const navigate = useNavigate();
 
 
@@ -29,6 +30,11 @@ const CheckoutComponent: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const DataApi: any = await cartItemApi.getCartItemByUser(userLogin?.id) || null;
     setCart(DataApi);
+    let sumTotal = 0;
+    DataApi?.map((item: { quantity: number; tbl_version: { price: number; }; })=>{
+      sumTotal+= item.quantity * item.tbl_version.price
+    })
+    setSubTotal(sumTotal);
   };
   useEffect(() => {
     handleCallData();
@@ -88,7 +94,8 @@ const CheckoutComponent: React.FC = () => {
             <div className="relative">
               <ul className="relative flex w-full items-center justify-between space-x-2 sm:space-x-4">
                 <li className="flex items-center space-x-3 text-left sm:space-x-4">
-                  <a className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-xs font-semibold text-emerald-700" href="#"
+                  <a href="/shop"
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-xs font-semibold text-emerald-700" 
                   ><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -96,7 +103,8 @@ const CheckoutComponent: React.FC = () => {
                   <span className="font-semibold text-gray-900">Shop</span>
                 </li>
                 <li className="flex items-center space-x-3 text-left sm:space-x-4">
-                  <a className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-xs font-semibold text-emerald-700" href="#"
+                  <a href="/cart"
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-xs font-semibold text-emerald-700" 
                   ><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -107,7 +115,8 @@ const CheckoutComponent: React.FC = () => {
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
                 <li className="flex items-center space-x-3 text-left sm:space-x-4">
-                  <a className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-600 text-xs font-semibold text-white ring ring-gray-600 ring-offset-2" href="#">2</a>
+                  <a href="/checkout"
+                   className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-600 text-xs font-semibold text-white ring ring-gray-600 ring-offset-2" >2</a>
                   <span className="font-semibold text-gray-900">Checkout</span>
                 </li>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -125,7 +134,7 @@ const CheckoutComponent: React.FC = () => {
 
       <div className=" max-w-5xl m-auto flex justify-between gap-3 mt-3 sm:px-10 lg:grid-cols-2 lg:px-10 xl:px-10">
         <div className="w-2/5 px- pt-8  bg-white">
-          {/* <p className="text-xl font-medium px-4">Cart</p> */}
+          <p className="text-xl font-medium px-4">Product order</p>
           <div className="mt-8 space-y-3 rounded-lg bg-white px-2 py-4 sm:px-6">
 
             {cart.length > 0 && cart.map((item) => {
@@ -211,7 +220,7 @@ const CheckoutComponent: React.FC = () => {
             <div className="flex">
               <div className="relative w-7/12 flex-shrink-0">
                 <input 
-                type="tel" 
+                type="number" 
                 id="phone" 
                 name="phone"
                 value={formData?.phone} 
@@ -247,16 +256,16 @@ const CheckoutComponent: React.FC = () => {
             <div className="mt-6 border-t border-b py-2">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Subtotal</p>
-                <p className="font-semibold text-gray-900">$399.00</p>
+                <p className="font-semibold text-gray-900">$ {subTotal}</p>
               </div>
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Shipping</p>
-                <p className="font-semibold text-gray-900">$8.00</p>
+                <p className="font-semibold text-gray-900">$ 0</p>
               </div>
             </div>
             <div className="mt-6 flex items-center justify-between">
               <p className="text-sm font-medium text-gray-900">Total</p>
-              <p className="text-2xl font-semibold text-gray-900">$408.00</p>
+              <p className="text-2xl font-semibold text-gray-900">$ {subTotal}</p>
             </div>
           </div>
           <button 

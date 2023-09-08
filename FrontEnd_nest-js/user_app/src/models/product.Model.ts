@@ -11,7 +11,7 @@ export interface IProduct
     description?: string;
 
     product?:Product;
-
+    data?:any;  
 }
 
 export interface Product
@@ -28,6 +28,11 @@ export class ProductApi
 {
      static async getAllProVer():Promise<Array<IProduct>> {
       const url:string = "api/v1/version/get-pro-with-all-ver";
+      const res = await axiosClient.get(url);
+      return res.data;
+    }
+    static async getAllProVerWithPage(page:any):Promise<any> {
+      const url:string = `api/v1/version/get-pro-with-all-ver?page=${page}`;
       const res = await axiosClient.get(url);
       return res.data;
     }
