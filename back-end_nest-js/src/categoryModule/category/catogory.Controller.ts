@@ -10,7 +10,6 @@ export class CategoryController
     @Get()
     getAllCategory()
     {
-        console.log('all category');
         return this.categoryService.findAll()
     }
     @Post()

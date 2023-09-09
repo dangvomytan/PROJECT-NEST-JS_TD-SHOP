@@ -25,15 +25,12 @@ export class VersionController {
     // Lấy tất cả danh sách product với version (phan trang)
     @Get('/get-pro-with-all-ver')
     getAllProductWithAllVersion(@Query() query: any) {
-        const { page, perPage } = query;
-        return this.versionService.findAllProductWithAllVersion(page, perPage)
+        const { page, perPage, filters } = query;     
+        console.log(query);
+        
+        return this.versionService.findAllProductWithAllVersion(page, perPage,filters)
     }
-    @Get('/get-pro-with-all-ver?page=:query')
-    getAllProductWithAllVersionWithPig(@Query() query: any) {
-        const { page, perPage } = query;
-        return this.versionService.findAllProductWithAllVersion(page, perPage)
-    }
-
+ 
     // lay detail product
     @Get('/get-pro-with-ver-by-id-ver/:id')
     getProductWithVersionByIdVer(@Param('id') id: number) {

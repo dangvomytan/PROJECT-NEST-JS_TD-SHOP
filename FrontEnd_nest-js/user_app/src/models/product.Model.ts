@@ -31,8 +31,8 @@ export class ProductApi
       const res = await axiosClient.get(url);
       return res.data;
     }
-    static async getAllProVerWithPage(page:any):Promise<any> {
-      const url:string = `api/v1/version/get-pro-with-all-ver?page=${page}`;
+    static async getAllProVerWithPage(page:number,filters:any):Promise<any> {
+      const url:string = `api/v1/version/get-pro-with-all-ver?page=${page}&filters=${filters}`;
       const res = await axiosClient.get(url);
       return res.data;
     }
