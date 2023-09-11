@@ -1,18 +1,15 @@
 
 import React, { useEffect, useState } from "react";
 import { CategoryApi } from "../../models/category.Model";
-import { ProductApi } from "../../models/product.Model";
-import { setProducts } from "../../redux/slice/product.Slice";
-import { useDispatch } from "react-redux";
+import { IFilterProps } from "../../types/types";
 
 
-const FilterComponent: React.FC = () => {
+const FilterComponent: React.FC<IFilterProps> = (props) => {
+    const { filters, setFilters, setPages } = props;
+    // console.log(filters,555);
+    
     const [catgeoryList, setCatgeoryList] = useState([])
-    const [filterValues,setFiltersProduct] = useState("")
-    const [currentPage, setCurrentPage] = useState(1); 
 
-    const dispatch = useDispatch()
-    //category list
     const handleCallCategoryData = async () => {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,36 +19,18 @@ const FilterComponent: React.FC = () => {
     useEffect(() => {
         handleCallCategoryData();
     }, []);
-    // s
-    const handleCallProductData = async () => {
-        try {
-          const dataApi: any = await ProductApi.getAllProVerWithPage(currentPage,filterValues);
-          setCurrentPage(dataApi.page)
-          dispatch(setProducts(dataApi))
-        } catch (error) {
-          console.error('Error :', error);
-        }
-      };
-      useEffect(() => {
-        handleCallProductData();
-      }, [filterValues]);
 
-    
-    const clickOnClickCategory = (item:any)=>{
-        setFiltersProduct("filCate=" + item.id)
-    } 
-    const clickOnClickBrand = ()=>{
-        setFiltersProduct("filBr=iphone")
-    }
+
     return (
         <>
-            <div className="p-4 mb-5 bg-white border-gray-200 dark:border-gray-900 dark:bg-gray-900">
+            <div className="p-4 mb-5  border-gray-200 dark:border-gray-900 dark:bg-gray-900">
                 <h2 className="text-xl font-bold dark:text-gray-400"> Categories</h2>
                 <div className="w-full pb-2 mb-6 border-b border-gray-00 dark:border-gray-400"></div>
                 <ul>
                     {catgeoryList?.length > 0 && catgeoryList?.map((catgeory:any) => {
                         return (
-                            <li onClick={() => clickOnClickCategory(catgeory)}
+                            <li 
+                            onClick={() => {setFilters('filCate='+catgeory.id),setPages(1)}}
                             className="mb-4 transform transition-transform hover:translate-x-3 cursor-pointer " key={catgeory.id}>
                                 <span className="flex items-center dark:text-gray-400 ">
                                     <span className="text-lg hover:border-b">
@@ -69,11 +48,12 @@ const FilterComponent: React.FC = () => {
                     View More
                 </a> */}
             </div>
-            <div className="p-4 mb-5 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-900">
+            <div className="p-4 mb-5 border-gray-200 dark:bg-gray-900 dark:border-gray-900">
                 <h2 className="text-xl font-bold dark:text-gray-400">Brand</h2>
                 <div className="w-full pb-2 mb-6 border-b border-gray-00 dark:border-gray-400"></div>
                 <ul>
-                    <li onClick={() => clickOnClickBrand()}
+                    <li 
+                    onClick={() => {setFilters('filBrd=iphone'),setPages(1)}}
                     className="mb-4 transform transition-transform hover:translate-x-3">
                         <label className="flex items-center dark:text-gray-300">
                             <span className="text-lg dark:text-gray-400">Apple</span>
@@ -81,7 +61,7 @@ const FilterComponent: React.FC = () => {
                     </li>
                 </ul>
             </div>
-            <div className="p-4 mb-5 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-900">
+            <div className="p-4 mb-5  border-gray-200 dark:bg-gray-900 dark:border-gray-900">
                 <h2 className="text-2xl font-bold dark:text-gray-400">Price</h2>
                 <div className="w-full pb-2 mb-6 border-b border-gray-00 dark:border-gray-400"></div>
                 <div>

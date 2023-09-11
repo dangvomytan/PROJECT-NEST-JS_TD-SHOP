@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Query } from "@nestjs/common";
 import { VersionService } from "./Version.Service";
-import { PaginationDTO } from "../dto/Pagination.DTO";
+import { query } from "express";
+import { VersionDTO } from "../dto/Version.DTO";
 
 
 @Controller('api/v1/version')
@@ -10,25 +11,45 @@ export class VersionController {
         public versionService: VersionService,
     ) { }
     @Get()
-    getAllVersions() {
+    test() {
         console.log('all versions');
-        return this.versionService.findAll();
     }
 
     //Lấy tất cả danh sách product với version
-    // @Get('/get-pro-with-all-ver')
-    // getAllProductWithAllVersion()
-    // {
-    //     return this.versionService.findAllProductWithAllVersion()
-    // }
+    @Get('/get-ver-by-pro-id/:id')
+    getAllVersionByProductId(@Query() query,@Param() param)
+    {
+        const {pages, limit,search} = query
+        console.log("version",query, param);
+        if(!search)
+        return this.versionService.findAllVersionByProductId(pages, limit, param.id)
+        else
+        return this.versionService.findSearchVersionByProductId(pages, limit, search,param.id)
+    }
 
     // Lấy tất cả danh sách product với version (phan trang)
     @Get('/get-pro-with-all-ver')
-    getAllProductWithAllVersion(@Query() query: any) {
-        const { page, perPage, filters } = query;     
+    getAllProductWithAllVersion(@Query() query:VersionDTO) {
         console.log(query);
         
-        return this.versionService.findAllProductWithAllVersion(page, perPage,filters)
+        const {filters,pages,limit} = query; 
+        let filterValue:{ [key: string]: any } | null = null;
+        if (filters) {
+            const [key, value] = filters.split('=');
+            filterValue = { [key]: value };
+        }
+        //Filter by id category
+        if (filterValue && filterValue.filCate != null)
+         {
+            return this.versionService.findAllProductFilterByCategory({...query,filterValue },pages,limit)
+         }
+        //Filter by brand
+        if (filterValue && filterValue.filBrd != null)
+        {
+            return this.versionService.findAllProductFilterByBrand({...query,filterValue },pages,limit)
+        }
+        // Khong xet dieu kien
+        return this.versionService.findAllProductWithAllVersion({...query},pages,limit)
     }
  
     // lay detail product

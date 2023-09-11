@@ -4,31 +4,16 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
 import PaginationComponent from '../../pagination/Pagination.Component'
 import FilterComponent from '../../filters/filter.Component'
+import { ProductApi } from '../../../models/product.Model'
+import { useDispatch } from 'react-redux'
+import { setProducts } from '../../../redux/slice/product.Slice'
 
 const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
+  { name: 'Name'},
+  { name: 'Date'},
 ]
-const subCategories = [
-  { name: 'Test', href: '#' },
-]
-const filters = [
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: '2', label: 'Smartphone', checked: false },
-      { value: '3', label: 'Laptop', checked: false },
-    ],
-  },
-  {
-    id: 'brand',
-    name: 'Brand',
-    options: [
-      { value: '2', label: 'Samsung', checked: false },
-      { value: '3', label: 'Apple', checked: false },
-    ],
-  },
-]
+
+
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -36,8 +21,28 @@ function classNames(...classes: string[]) {
 
 const ProductListComponent: React.FC = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const dispatch = useDispatch()
+
+  const [pages, setPages] = useState<number>(1);
+  const [filters, setFilters] = useState<string>('');
+
+  //ham xu li goi api
+  const handleCallData = async () => {
+    try {
+      const dataApi: any = await ProductApi.getAllProVerWithPage(pages, filters);
+      dispatch(setProducts(dataApi))
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+
+  useEffect(() => {
+    handleCallData();
+  }, [pages, filters])
+
   return (
-    <div className="bg-white">
+    <div>
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -76,63 +81,6 @@ const ProductListComponent: React.FC = () => {
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
-
-                  {/* Filters */}
-                  <form className="mt-4 border-t border-gray-200">
-                    <h3 className="sr-only">Categories</h3>
-                    <ul role="list" className="px-2 py-3 font-medium text-gray-900">
-                      {subCategories.map((category) => (
-                        <li key={category.name}>
-                          <a href={category.href} className="block px-2 py-3">
-                            {category.name}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {filters.map((section) => (
-                      <Disclosure as="div" key={section.id} className="border-t border-gray-200 px-4 py-6">
-                        {({ open }) => (
-                          <>
-                            <h3 className="-mx-2 -my-3 flow-root">
-                              <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                <span className="font-medium text-gray-900">{section.name}</span>
-                                <span className="ml-6 flex items-center">
-                                  {open ? (
-                                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                  ) : (
-                                    <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                  )}
-                                </span>
-                              </Disclosure.Button>
-                            </h3>
-                            <Disclosure.Panel className="pt-6">
-                              <div className="space-y-6">
-                                {section.options.map((option, optionIdx) => (
-                                  <div key={option.value} className="flex items-center">
-                                    <input
-                                      id={`filter-mobile-${section.id}-${optionIdx}`}
-                                      name={`${section.id}[]`}
-                                      defaultValue={option.value}
-                                      type="checkbox"
-                                      defaultChecked={option.checked}
-                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <label
-                                      htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                      className="ml-3 min-w-0 flex-1 text-gray-500"
-                                    >
-                                      {option.label}
-                                    </label>
-                                  </div>
-                                ))}
-                              </div>
-                            </Disclosure.Panel>
-                          </>
-                        )}
-                      </Disclosure>
-                    ))}
-                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -171,9 +119,7 @@ const ProductListComponent: React.FC = () => {
                         <Menu.Item key={option.name}>
                           {({ active }) => (
                             <a
-                              href={option.href}
                               className={classNames(
-                                option.current ? 'font-medium text-gray-900' : 'text-gray-500',
                                 active ? 'bg-gray-100' : '',
                                 'block px-4 py-2 text-sm'
                               )}
@@ -211,14 +157,14 @@ const ProductListComponent: React.FC = () => {
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
               {/* Filters */}
               <div>
-              <FilterComponent/>
+                <FilterComponent filters={filters} setFilters={setFilters} setPages={setPages} />
               </div>
 
               {/* Product grid */}
               <div className="lg:col-span-3">
                 {/* //================================================================
                 // === SHOW PRODUCT === */}
-                <PaginationComponent/>
+                <PaginationComponent pages={pages} setPages={setPages} />
                 {/* //================================================================ */}
               </div>
             </div>

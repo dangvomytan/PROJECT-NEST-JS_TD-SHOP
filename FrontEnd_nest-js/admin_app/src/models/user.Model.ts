@@ -9,12 +9,15 @@ export interface IUser
     email:string;
     password:string;                                                                                             
     is_Delete?:number;
+    createdAt?: Date,
 }
 
 export class UserApi {
 
-     static async getAll():Promise<Array<IUser>> {
-       const url:string = "api/v1/user/get-all";
+     static async getAll(params: { pages: number; limit: number; search:string }):Promise<Array<IUser>> {
+      console.log(params);
+      
+       const url:string = "/api/v1/user?pages=" + params.pages+"&limit=" + params.limit+"&search=" + params.search;
        const res = await axiosClient.get(url);
        return res.data;
      }

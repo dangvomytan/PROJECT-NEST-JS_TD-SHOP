@@ -2,9 +2,16 @@ import React, { Fragment, useRef, useEffect, useState } from "react";
 import { UserApi, IUser } from "../../models/user.Model";
 import { Dialog, Transition } from "@headlessui/react";
 import { Toaster, toast } from "react-hot-toast";
+import { format, parseISO } from 'date-fns';
 
 const UserListComponent: React.FC = () => {
   const [userApi, setUserApi] = useState<IUser[]>([]);
+  const [pages, setPages] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [totalPage, setTotalPage] = useState(1)
+  const [search, setSearch] = useState("")
+
+
   const [open, setOpen] = useState(false);
   const cancelButtonRef = useRef(null);
   const [actionType, setActionType] = useState<
@@ -17,291 +24,218 @@ const UserListComponent: React.FC = () => {
     password: "",
     is_Delete: 0,
   });
-
+  // call api ----------------------------------------------------------------
   const handleCallDataUserApi = async () => {
     try {
-      const res = await UserApi.getAll();
-      setUserApi(res.filter((item) => item.is_Delete === 0));
+      const res: any = await UserApi.getAll({ pages, limit, search });
+      setUserApi(res.dataUser);
+      setTotalPage(res.totalPage);
+      setLimit(res.limit);
+      setPages(res.pages);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
-
+  // useEffect ----------------------------------------------------------------
   useEffect(() => {
     handleCallDataUserApi();
-  }, []);
+  }, [limit, pages]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prevFormData) => ({
+  //     ...prevFormData,
+  //     [name]: value,
+  //   }));
+  // };
 
-  const handleAction = (
-    action: "CREATE" | "UPDATE" | "DELETE",
-    user?: IUser
-  ) => {
-    setActionType(action);
-    const newFormData: IUser = user ? { ...user } : { ...formData };
-    setFormData(newFormData);
-    setOpen(true);
-  };
+  // const handleAction = (
+  //   action: "CREATE" | "UPDATE" | "DELETE",
+  //   user?: IUser
+  // ) => {
+  //   setActionType(action);
+  //   const newFormData: IUser = user ? { ...user } : { ...formData };
+  //   setFormData(newFormData);
+  //   setOpen(true);
+  // };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      if (actionType === "DELETE") {
-        await UserApi.isdelete(formData);
-        toast.success("Delete successfully");
-      } else if (actionType === "CREATE") {
-        await UserApi.create(formData);
-        toast.success("Create successfully");
-      } else {
-        await UserApi.update(formData);
-        toast.success("Update successfully");
-      }
-      handleCallDataUserApi();
-      setOpen(false);
-    } catch (error) {
-      toast.error("An error occurred");
-      console.error("API Error:", error);
-    }
-  };
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   try {
+  //     if (actionType === "DELETE") {
+  //       await UserApi.isdelete(formData);
+  //       toast.success("Delete successfully");
+  //     } else if (actionType === "CREATE") {
+  //       await UserApi.create(formData);
+  //       toast.success("Create successfully");
+  //     } else {
+  //       await UserApi.update(formData);
+  //       toast.success("Update successfully");
+  //     }
+  //     handleCallDataUserApi();
+  //     setOpen(false);
+  //   } catch (error) {
+  //     toast.error("An error occurred");
+  //     console.error("API Error:", error);
+  //   }
+  // };
+  // change limit ---------------------------------------------------------------
+  const handleLimitChange = (e: any) => {
+    const newLimit = parseInt(e.target.value); // Chuyển đổi giá trị từ chuỗi sang số nguyên
+    setLimit(newLimit);
+    setPages(1)
+  }
+  // input search ---------------------------------------------------------------
+  const handleSearchChange = (e: any) => {
+    const searchValue = e.target.value; // Chuyển đổi giá trị từ chuỗi sang số nguyên
+    setSearch(searchValue);
+  }
+  // click search ---------------------------------------------------------------
+  const handleClickSearch = () => {
+    handleCallDataUserApi();
+  }
+  // pagination ---------------------------------------------------------------
+  let pageNumbers: number[] = [];
+  for (let i = 1; i <= totalPage; i++) {
+    pageNumbers.push(i);
+  }
+  // ===================================================================
   return (
     <div>
       {/* Toaster */}
       <Toaster position="bottom-right" reverseOrder={false} />
       {/* Modals */}
-      <Transition.Root show={open} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-11"
-          initialFocus={cancelButtonRef}
-          onClose={setOpen}
-        >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
+      <div className="overflow-x-auto bg-white rounded shadow dark:bg-gray-900">
+        <div className="">
+        <h2
+            className="px-6 py-4 pb-0 text-2xl font-medium ">
+              List of user
+          </h2>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                enterTo="opacity-100 translate-y-0 sm:scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                  <form action="/product" method="POST" onSubmit={handleSubmit}>
-                    <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                      <div className="w-full max-w-full px-3 shrink-0  md:flex-0">
-                        <Dialog.Title
-                          as="h3"
-                          className="text-base font-semibold leading-6 text-gray-900"
-                        >
-                          {actionType === "CREATE"
-                            ? "CREATE"
-                            : actionType === "UPDATE"
-                            ? "UPDATE"
-                            : "DELETE"}
-                        </Dialog.Title>
+          <div className="flex flex-wrap items-center justify-between px-4 py-0   dark:border-gray-700">
+
+            <div className="flex items-center pl-3">
+              <p className="text-base text-gray-400">Show</p>
+              <div className="px-2 py-2 text-xs text-gray-500 ">
+                <select 
+                name="limit" onChange={handleLimitChange} value={limit}
+                  className="block text-base rounded-sm bg-gray-100 cursor-pointer w-11 dark:text-gray-400 dark:bg-gray-700">
+                  <option value="2">2</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+              <p className="text-base text-gray-400">entries</p>
+            </div>
+
+            <div className="flex px-4 py-2 my-2 border border-gray-300 rounded-md md:mb-0 dark:border-gray-400">
+              <input type="text"
+                name="search"
+                onChange={handleSearchChange}
+                className="w-full pr-4 text-base text-gray-700 outline-0 bg-white dark:text-gray-400 dark:bg-gray-900 placeholder-text-100 "
+                placeholder="search..." />
+              <button
+                onClick={() => handleClickSearch()}
+                className="flex items-center text-gray-700 dark:text-gray-400 dark:hover:text-blue-300 hover:text-blue-600">
+                <span className="mr-2 text-base ">Go</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  className="bi bi-arrow-right" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <table className="w-full table-auto">
+            <thead className="bg-gray-100 dark:bg-gray-700">
+              <tr className="text-base text-left text-gray-500 border-b border-gray-200 dark:border-gray-800">
+                <th className="flex items-center py-4 pl-6 font-medium dark:text-gray-400">
+                  <span className="mr-4">No</span>
+                  <span>Name</span>
+                </th>
+                <th className="px-6 py-4 font-medium dark:text-gray-400">Age</th>
+                <th className="px-6 py-4 font-medium dark:text-gray-400">Created</th>
+                <th className="px-6 py-4 font-medium dark:text-gray-400">Status</th>
+                <th className="px-6 py-4 font-medium dark:text-gray-400">Actions</th>
+                <th className="px-6 py-4 font-medium dark:text-gray-400"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {userApi.length > 0 && userApi?.map((item: any, index) => {
+                return (
+                  <tr key={item.id}
+                    className="border-b border-gray-200 dark:border-gray-800">
+                    <td className="flex items-center px-6 py-3 font-medium">
+                      <span className="mr-4" >{index + 1}</span>
+                      <div className="flex">
+                        <img className="object-cover w-10 h-10 mr-4 rounded-full"
+                          src="https://i.postimg.cc/WbPKvgBr/pexels-italo-melo-2379005.jpg" alt="" />
+                        <div>
+                          <p className="text-sm font-medium dark:text-gray-400">{item.first_Name + " " + item.last_Name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-500">{item.email}</p>
+                        </div>
                       </div>
-                      {actionType === "DELETE" ? (
-                        <>
-                          <div className="w-full max-w-full px-3 shrink-0  md:flex-0">
-                            <p className="text-sm text-gray-500">
-                              Are you sure you want to deactivate this product?
-                              This action cannot be undone.
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-full max-w-full px-3 shrink-0  md:flex-0">
-                            <div className="mb-4">
-                              <label className="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                Last name
-                              </label>
-                              <input
-                                type="text"
-                                name="full_Name"
-                                value={formData.last_Name}
-                                onChange={handleChange}
-                                className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                              />
-                            </div>
-                            <div className="mb-4">
-                              <label className="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                First Name
-                              </label>
-                              <input
-                                type="text"
-                                name="first_Name"
-                                value={formData.first_Name}
-                                onChange={handleChange}
-                                className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                              />
-                            </div>
-                            <div className="mb-4">
-                              <label className="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                Email
-                              </label>
-                              <input
-                                type="text"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                              />
-                            </div>
-                            {actionType === "CREATE" ? (
-                              <div className="mb-4">
-                                <label className="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                  Password
-                                </label>
-                                <input
-                                  type="password"
-                                  name="password"
-                                  value={formData.password}
-                                  onChange={handleChange}
-                                  className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
+                    </td>
+                    <td className="px-6 text-sm font-medium dark:text-gray-400"></td>
+                    <td className="px-6 text-sm font-medium dark:text-gray-400">{format(parseISO(item.createdAt), "dd/MM/yyyy HH:mm:ss")}</td>
+                    <td className="px-6 text-sm font-medium dark:text-gray-400">
+                      {
+                        item.is_Delete == 0
+                          ? (<span className='inline-block px-2 py-1 text-blue-700 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Enable</span>)
+                          : (<span className='inline-block px-2 py-1 text-red-700 bg-red-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Disable</span>)
+                      }
 
-                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                      <button
-                        type="submit"
-                        className="mt-3 inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 m-1 text-sm font-semibold text-white  shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-500 sm:mt-0 sm:w-auto"
-                        ref={cancelButtonRef}
-                      >
-                        {actionType === "CREATE"
-                          ? "CREATE"
-                          : actionType === "UPDATE"
-                          ? "UPDATE"
-                          : "DELETE"}
-                      </button>
-                      <button
-                        type="button"
-                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 m-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                        onClick={() => setOpen(false)}
-                        ref={cancelButtonRef}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition.Root>
-      <div className="flex-none w-full max-w-full px-3">
-        <div className="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
-          <div className="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-            <h6 className="dark:text-white">Admin</h6>
-          </div>
-          <div className="flex-auto px-0 pt-0 pb-2">
-            <div className="p-0 overflow-x-auto">
-              <table className="items-center justify-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
-                <thead className="align-bottom">
-                  <tr>
-                    <th className="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                      #
-                    </th>
-                    <th className="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                      Eamail
-                    </th>
-                    <th className="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                      First Name
-                    </th>
-                    <th className="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                      Last Name
-                    </th>
-                    <th className="px-6 py-3 font-semibold capitalize align-middle text-right bg-transparent border-b border-solid shadow-none dark:border-white/40 dark:text-white tracking-none whitespace-nowrap">
-                      <button
-                        className="inline-block px-2 py-1 m-1 font-bold text-center uppercase align-middle transition-all bg-transparent border-1 rounded-lg shadow-none leading-normal text-sm ease-in bg-150 tracking-tight-rem bg-x-25 text-slate-400 hover:text-blue-700"
-                        onClick={() => handleAction("CREATE")}
-                      >
-                        Create
-                      </button>
-                    </th>
+                    </td>
+                    <td className="px-6">
+                      <div className="flex ">
+                        <a href="#"
+                          className="px-4 py-2 mr-4 text-sm text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            className="bi bi-three-dots" viewBox="0 0 16 16">
+                            <path
+                              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                          </svg>
+                        </a>
+                        <a href="#"
+                          className="px-4 py-2  text-sm text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
+                          {item.is_Delete == 0 ? "Lock" : "Unlock"}
+                        </a>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="border-t">
-                  {userApi.length > 0 &&
-                    userApi.map((item, index) => {
-                      return (
-                        <tr key={item.id}>
-                          <td className="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                            <p className="mb-0 text-sm font-semibold leading-normal dark:text-white dark:opacity-60">
-                              {index + 1}
-                            </p>
-                          </td>
-                          <td className="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                            <p className="mb-0 text-sm font-semibold leading-normal dark:text-white dark:opacity-60">
-                              {item.email}
-                            </p>
-                          </td>
-                          <td className="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                            <p className="mb-0 text-sm font-semibold leading-normal dark:text-white dark:opacity-60">
-                              {item.first_Name}
-                            </p>
-                          </td>
-                          <td className="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                            <span className="text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                              {item.last_Name}
-                            </span>
-                          </td>
-                          <td className="p-2 align-middle text-right bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                            {/* <button
-                              className="inline-block px-2 py-1 m-1 font-bold text-center uppercase align-middle transition-all bg-transparent border-1 rounded-lg shadow-none leading-normal text-sm ease-in bg-150 tracking-tight-rem bg-x-25 text-slate-400 hover:text-blue-700"
-                              onClick={() => handleAction("UPDATE", item)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="inline-block px-2 py-1 m-1 font-bold text-center uppercase align-middle transition-all bg-transparent border-1 rounded-lg shadow-none leading-normal text-sm ease-in bg-150 tracking-tight-rem bg-x-25 text-slate-400 hover:text-blue-700"
-                              onClick={() => handleAction("DELETE", item)}
-                            >
-                              Delete
-                            </button> */}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  {userApi.length == 0 && (
-                    <tr>
-                      <td colSpan={8}>No data</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                )
+              })}
+              {userApi.length === 0 && <tr  className="border-b border-gray-200 dark:border-gray-800"><td className="px-6 text-sm font-medium dark:text-gray-400">Not found</td></tr>}
+            </tbody>
+          </table>
+
+          <div className="flex flex-wrap items-center justify-between px-6 py-3">
+            <p className="mb-4 text-xs lg:mb-0 dark:text-gray-400">sd {pages} of {totalPage} Pages</p>
+            <nav aria-label="page-navigation ">
+              <ul className="flex mb-4 list-style-none lg:mb-0">
+                {
+                  pageNumbers.length > 0 && pageNumbers.map((num) => {
+                    return (
+                      <li key={num}
+                        onClick={() => setPages(num)}
+                        className={`relative block px-3 py-1 mr-1 text-xs text-gray-700 transition-all duration-300 rounded-md dark:text-gray-400 ${pages === num ? "dark:hover:bg-gray-700 bg-blue-600 text-white" : "dark:hover:bg-gray-700 hover:bg-blue-100"
+                          }`}>
+                        <span>
+                          {num}
+                        </span>
+                      </li>
+                    )
+                  })
+                }
+              </ul>
+            </nav>
           </div>
+
         </div>
       </div>
     </div>
+
   );
 };
 

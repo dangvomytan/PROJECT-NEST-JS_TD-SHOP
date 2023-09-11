@@ -1,4 +1,4 @@
-import {Controller, Get, Param} from '@nestjs/common'
+import {Controller, Get, Param, Query} from '@nestjs/common'
 import { ProductService } from './product.Service';
 
 @Controller('api/v1/product')
@@ -8,10 +8,14 @@ export class ProductController {
         public productService: ProductService
     ){}
     @Get()
-    getAllProduct()
+    getAllProduct(@Query() query)
     {
-        console.log('all product');
-        return this.productService.findAll();
+        const {pages,limit,search}=query
+        console.log('product', query);
+        if(!search)
+        return this.productService.findAllProduct(pages,limit);
+        else
+        return this.productService.findSearchProduct(pages,limit,search);
     }
 
     // @Get('get-all-info-pro-by-id-ver/:id')

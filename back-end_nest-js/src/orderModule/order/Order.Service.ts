@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrderEntity } from "../database/Order.Entity";
-import { Repository } from "typeorm";
+import { Repository, SelectQueryBuilder } from "typeorm";
 import { OrderItemEntity } from "src/orderItemModule/database/OrderItem.Entity";
 import { CartItemEntity } from "src/cartItemModule/database/CartItem.Entity";
 
@@ -16,9 +16,20 @@ export class OrderService {
         private cartItemRepo: Repository<CartItemEntity>
     ) {}
 
-    async findAll(): Promise<OrderEntity[]> {
-        const data = await this.orderRepo.find();
-        return data;
+    async getAllOrder(pages: number, limit: number, search:string)
+    {
+        const skip: number = (pages - 1) * limit;
+        let queryBuilder: SelectQueryBuilder<OrderEntity>;
+        queryBuilder = this.orderRepo.createQueryBuilder('tbl_order')
+        .leftJoinAndSelect('tbl_order.tbl_user', 'user')
+        // Thực hiện phân trang bằng cách bỏ qua các mục không cần thiết và lấy số lượng mục trên mỗi trang
+        const dataOrder = await queryBuilder.skip(skip).take(limit).getMany();
+        let totalItem: number = await queryBuilder.getCount();
+        // Tính toán tổng số trang
+        const totalPage: number = Math.ceil(totalItem / limit);
+        console.log(totalPage);
+
+        return { dataOrder, totalPage, pages, limit };
     }
 
     async createOrder(body: any) {

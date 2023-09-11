@@ -1,4 +1,5 @@
 import axiosClient from "../api/AxiosClient";
+import axiosSub from "../api/AxiosSub";
 
 
 export interface IProduct
@@ -31,9 +32,10 @@ export class ProductApi
       const res = await axiosClient.get(url);
       return res.data;
     }
-    static async getAllProVerWithPage(page:number,filters:any):Promise<any> {
-      const url:string = `api/v1/version/get-pro-with-all-ver?page=${page}&filters=${filters}`;
-      const res = await axiosClient.get(url);
+    static async getAllProVerWithPage(pages:number,filters:string):Promise<any> {
+      console.log(pages,filters);
+      const url:string = "api/v1/version/get-pro-with-all-ver?pages=" +pages+"&filters="+filters;
+      const res = await axiosSub.get(url);
       return res.data;
     }
 

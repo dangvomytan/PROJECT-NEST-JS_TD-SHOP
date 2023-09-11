@@ -1,49 +1,23 @@
 import React, { useEffect, useState } from "react";
 // import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { useDispatch, useSelector } from "react-redux";
-import { ProductApi } from "../../models/product.Model";
-import { setProducts } from "../../redux/slice/product.Slice";
 import ProductGridComponent from "../shop/ProductGrid/ProductGrid.Component";
+import { IPaginationProps } from "../../types/types";
 
 
-const PaginationComponent: React.FC = () => {
-  const dispatch = useDispatch()
+const PaginationComponent: React.FC<IPaginationProps> = (props) => {
+  
+  const {pages, setPages } = props;
   const stateProduct = useSelector((state:any)=>state.product.data)
-
-
-  const [pageValue, setPageValue] = useState(1)
-  const [page, setPage] = useState(1);
-  // const [limit, setLimit] = useState(1);
+  console.log(stateProduct);
+  
   const [totalPage, setTotalPage] = useState(1);
-  const [filters, setFilters] =useState();
-
-
-
-  const handleCallData = async () => {
-    try {
-      const dataApi: any = await ProductApi.getAllProVerWithPage(pageValue,filters);
-      dispatch(setProducts(dataApi))
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
 
   useEffect(() => {
-    handleCallData();
-  }, [pageValue]);
-
-  useEffect(() => {
-    setPage(stateProduct.page);
     // setLimit(stateProduct.limit);
     setTotalPage(stateProduct.totalPage)
-    setFilters(stateProduct.filters);
   }, [stateProduct]);
 
-
-  //hande click page change event
-  const handlePageChange = (pageNum: any) => {
-    setPageValue(pageNum);
-  };
 //bien chua nut phan trang
   let pageNumbers:number[] = [];
   // // Giới hạn số lượng nút phân trang được hiển thị (trong ví dụ này, giới hạn là 5)
@@ -106,7 +80,7 @@ const PaginationComponent: React.FC = () => {
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              <span className="font-medium">{page==0?"1":page}</span> of <span className="font-medium">{totalPage==0?'1':totalPage}</span> {' '}
+              <span className="font-medium">{pages==0?"1":pages}</span> of <span className="font-medium">{totalPage==0?'1':totalPage}</span> {' '}
               <span className="font-medium"></span> pages
             </p>
           </div>
@@ -123,15 +97,15 @@ const PaginationComponent: React.FC = () => {
               </a> */}
               {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
               {
-                pageNumbers?.map((pageNum) => {
+                pageNumbers?.map((numPage) => {
                   return (
-                    <span
-                      onClick={() => handlePageChange(pageNum)}
-                      key={pageNum}
+                    <span 
+                      onClick={() => setPages(numPage)}
+                      key={numPage}
                       aria-current="page"
-                      className={`page-link ${page == pageNum ? 'relative z-10 cursor-pointer inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600' : 'relative cursor-pointer inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:border-gray-200 focus:z-20 focus:outline-offset-0'}`}
+                      className={`page-link ${pages == numPage ? 'relative z-10 cursor-pointer inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600' : 'relative cursor-pointer inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:border-gray-200 focus:z-20 focus:outline-offset-0'}`}
                     >
-                      {pageNum?pageNum:1}
+                      {numPage}
                     </span>
                   )
                 })

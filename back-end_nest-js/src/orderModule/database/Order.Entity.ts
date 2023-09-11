@@ -30,7 +30,7 @@ export class OrderEntity{
     // order => user
     @Column()
     user_Id:number;
-    @OneToMany(()=>UserEntity,(user)=>user.tbl_order)
+    @ManyToOne(()=>UserEntity,(user)=>user.tbl_order)
     @JoinColumn({name: 'user_Id'})
     tbl_user:UserEntity;
     

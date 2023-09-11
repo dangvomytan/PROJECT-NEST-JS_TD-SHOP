@@ -17,8 +17,8 @@ export interface IVersion
 
 export class VersionApi {
 
-     static async getAll():Promise<Array<IVersion>> {
-       const url:string = "api/v1/version/get-all";
+     static async getAll(query:any,pro_id:number):Promise<Array<IVersion>> {
+       const url:string = "api/v1/version/get-ver-by-pro-id/"+pro_id+"?pages="+query.pages+"&limit="+query.limit+"&search="+query.search;
        const res = await axiosClient.get(url);
        return res.data;
      }

@@ -13,8 +13,8 @@ export interface IProduct
 
 export class ProductApi {
 
-     static async getAll():Promise<Array<IProduct>> {
-       const url:string = "api/v1/product/get-all";
+     static async getAll(prams:any):Promise<Array<IProduct>> {
+       const url:string = "/api/v1/product?pages="+prams.pages+"&limit="+prams.limit+"&search="+prams.search;       
        const res = await axiosClient.get(url);
        return res.data;
      }

@@ -17,3 +17,13 @@ export interface DeleteModalProp
     setStatusModal: (status:boolean)=>void;
     handleDelCartItem: (item:object)=>void;
 }
+
+export interface IPaginationProps {
+    pages: number;
+    setPages: (str:number)=>void;
+}
+export interface IFilterProps {
+    filters: any;
+    setFilters: (str:any)=>void;
+    setPages: (str:number)=>void;
+}

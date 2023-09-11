@@ -13,7 +13,7 @@ const MainLayout:React.FC = () => {
 {/* <FeaturedComponent/> */}
 {/* <NewProductComponent/> */}
         <Outlet/>
-{/* <FooterComponent/> */}
+<FooterComponent/>
 </>
 
   )

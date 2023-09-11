@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { Repository, SelectQueryBuilder } from "typeorm";
 import { UserEntity } from "../database/User.Entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Response, Request } from "express";
@@ -17,7 +17,35 @@ export class UserService {
         @InjectRepository(UserEntity)
         private userRepo: Repository<UserEntity>
     ) { }
+    async findAllUsers(pages: number, limit: number) {
+        const skip: number = (pages - 1) * limit;
+        let queryBuilder: SelectQueryBuilder<UserEntity>;
+        queryBuilder = this.userRepo.createQueryBuilder('tbl_user')
+        // Thực hiện phân trang bằng cách bỏ qua các mục không cần thiết và lấy số lượng mục trên mỗi trang
+        const dataUser = await queryBuilder.skip(skip).take(limit).getMany();
+        let totalItem: number = await queryBuilder.getCount();
+        // Tính toán tổng số trang
+        const totalPage: number = Math.ceil(totalItem / limit);
+        console.log(totalPage);
 
+        return { dataUser, totalPage, pages, limit };
+    }
+    async findSearchUsers(pages: number, limit: number, search: string) {
+        const skip: number = (pages - 1) * limit;
+        let queryBuilder: SelectQueryBuilder<UserEntity>;
+        queryBuilder = this.userRepo.createQueryBuilder('tbl_user')
+            .where('tbl_user.first_Name LIKE:keyword ', { keyword: `%${search}%` })
+            .orWhere('tbl_user.last_Name LIKE:keyword ', { keyword: `%${search}%` })
+            .orWhere('tbl_user.email LIKE:keyword ', { keyword: `%${search}%` });
+        // Thực hiện phân trang bằng cách bỏ qua các mục không cần thiết và lấy số lượng mục trên mỗi trang
+        const dataUser = await queryBuilder.skip(skip).take(limit).getMany();
+        let totalItem: number = await queryBuilder.getCount();
+        // Tính toán tổng số trang
+        const totalPage: number = Math.ceil(totalItem / limit);
+        console.log(totalPage);
+
+        return { dataUser, totalPage, pages, limit };
+    }
 
     async registerUser(body: any) {
         const { email, password } = body
@@ -51,17 +79,15 @@ export class UserService {
 
     async loginUser(data: UserDTO, res: Response) {
         const { email, password } = data
-        console.log(1111,data);
-        
         try {
             // Kiểm tra xem email đã tồn tại chưa
             const loginUser = await this.userRepo.findOne({ where: { email: email } })
-            if (!loginUser) {   
-                return res.status(401).json({ message:  'Email not found' })
+            if (!loginUser) {
+                return res.status(401).json({ message: 'Email not found' })
             }
             else {
-                const myPass = await bcrypt.compare(password, loginUser.password); 
-                console.log(1111,myPass);
+                const myPass = await bcrypt.compare(password, loginUser.password);
+                console.log(1111, myPass);
                 // giải mã pass
                 if (myPass) {
                     // console.log(">>>",loginUser); 

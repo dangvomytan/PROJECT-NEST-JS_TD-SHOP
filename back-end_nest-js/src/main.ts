@@ -12,6 +12,7 @@ async function bootstrap() {
     // Kích hoạt CORS
     const corsOrigin = [
       'http://localhost:3000',
+      'http://localhost:4000',
       'http://localhost:8080',
     ];
   

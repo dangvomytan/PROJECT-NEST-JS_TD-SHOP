@@ -11,6 +11,7 @@ import CheckoutComponent from "../components/checkout/Checkout.Component";
 import CartComponent from "../components/cart/Cart.Component";
 import PaymentComponent from "../components/payment/Payment.Component";
 import ShopComponent from "../components/shop/shop/Shop.Component";
+import ProfileComponent from "../components/profile/Profile.Component";
 
 const Router = () => {
   return (
@@ -27,6 +28,7 @@ const Router = () => {
         <Route path="cart" element={<CartComponent/>} />
         <Route path="checkout" element={<CheckoutComponent/>} />
         <Route path="payment" element={<PaymentComponent/>} />
+        <Route path="profile" element={<ProfileComponent/>} />
       </Route>
       {/* </Route> */}
      

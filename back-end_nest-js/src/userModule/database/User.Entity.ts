@@ -12,6 +12,7 @@ export class UserEntity
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Transform((user)=>user.value.toUpperCase())
     @Column()
     first_Name: string;
 

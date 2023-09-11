@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, UseInterceptors } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Post, Query, Req, Res, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./User.Service";
 import { UserDTO } from "../dto/User.dto";
 import { Request, Response } from 'express'
@@ -10,10 +10,19 @@ export class UserController {
         public userService: UserService
     ){}
     @UseInterceptors(ClassSerializerInterceptor)
+
     @Get()
-    test()
+    getAllUser(@Query() query)
     {
-        console.log("ok");
+        console.log(query);
+        const {pages,limit,search} =query
+        if(!search)
+        {
+            return this.userService.findAllUsers(Number(pages),Number(limit));
+        }
+        else{
+            return this.userService.findSearchUsers(Number(pages),Number(limit),search);
+        }
     }
 
     @Post('/register-user')

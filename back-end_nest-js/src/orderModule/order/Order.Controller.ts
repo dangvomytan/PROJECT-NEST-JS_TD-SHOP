@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { OrderService } from "./Order.Service";
 import { OrderEntity } from "../database/Order.Entity";
 
@@ -9,8 +9,9 @@ export class OrderController
     constructor(private orderService: OrderService){}
 
     @Get()
-    test(){
-        console.log('ok');
+    getAllOrder(@Query() query){
+        const {pages, limit, search} = query
+        return this.orderService.getAllOrder(pages, limit, search);
     }
 
     // create Order

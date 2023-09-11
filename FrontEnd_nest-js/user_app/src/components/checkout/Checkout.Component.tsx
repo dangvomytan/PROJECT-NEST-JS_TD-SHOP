@@ -5,6 +5,7 @@ import { IUser } from '../../models/user.Model';
 import { Toaster, toast } from 'react-hot-toast';
 import { OrderApi } from '../../models/order.Model';
 import { useNavigate } from 'react-router-dom';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 
 const CheckoutComponent: React.FC = () => {
   const [cart, setCart] = useState<ICart[]>([]);
@@ -269,8 +270,37 @@ const CheckoutComponent: React.FC = () => {
             </div>
           </div>
           <button 
-          onClick={()=>clickOrder()}
-          className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place Order</button>
+          // onClick={()=>clickOrder()}
+          className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place Order
+          </button>
+          <PayPalButtons
+            style={{
+              layout: "horizontal",
+              height: 48,
+            }}
+            createOrder={(data, actions) => {
+              {
+                console.log(data);
+                return actions.order.create({
+                  purchase_units: [
+                    {
+                      amount: {
+                        currency_code: "USD",
+                        value: '2000', // Sử dụng giá trị totalAmount ở đây
+                      },
+                      description: `Purchase at ${new Date().toLocaleString()}`,
+                    },
+                  ],
+                });
+              }
+            }}
+            onApprove={(_, actions): any => {
+              return actions.order
+                ?.capture()
+                // .then(() => handlePaymentSuccess());
+                .then(() => clickOrder());
+            }}
+          />
         </div>
       </div>
 
