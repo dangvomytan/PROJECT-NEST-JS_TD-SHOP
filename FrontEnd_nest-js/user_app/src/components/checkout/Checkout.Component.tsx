@@ -60,6 +60,7 @@ const CheckoutComponent: React.FC = () => {
         phone: Number(formData.phone),
         method: formData.method,
         status: formData.status,
+        total: subTotal,
         user_Id: userLogin?.id
       }
 
@@ -248,7 +249,7 @@ const CheckoutComponent: React.FC = () => {
                 value={formData.method}
                 >
                   <option>--- Select ---</option>
-                  <option value="card">card</option>
+                  <option value="paypal">Paypal</option>
                 </select>
               </div>
             </div>
@@ -270,7 +271,7 @@ const CheckoutComponent: React.FC = () => {
             </div>
           </div>
           <button 
-          // onClick={()=>clickOrder()}
+          onClick={()=>clickOrder()}
           className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place Order
           </button>
           <PayPalButtons
@@ -286,7 +287,8 @@ const CheckoutComponent: React.FC = () => {
                     {
                       amount: {
                         currency_code: "USD",
-                        value: '2000', // Sử dụng giá trị totalAmount ở đây
+                        value: '1000'
+                        , // Sử dụng giá trị totalAmount ở đây
                       },
                       description: `Purchase at ${new Date().toLocaleString()}`,
                     },
@@ -297,8 +299,8 @@ const CheckoutComponent: React.FC = () => {
             onApprove={(_, actions): any => {
               return actions.order
                 ?.capture()
-                // .then(() => handlePaymentSuccess());
-                .then(() => clickOrder());
+                                .then(() =>console.log(111));
+                // .then(() => clickOrder());
             }}
           />
         </div>

@@ -22,6 +22,7 @@ export class OrderService {
         let queryBuilder: SelectQueryBuilder<OrderEntity>;
         queryBuilder = this.orderRepo.createQueryBuilder('tbl_order')
         .leftJoinAndSelect('tbl_order.tbl_user', 'user')
+        .leftJoinAndSelect('tbl_order.tbl_orderitem', 'tbl_orderitem');
         // Thực hiện phân trang bằng cách bỏ qua các mục không cần thiết và lấy số lượng mục trên mỗi trang
         const dataOrder = await queryBuilder.skip(skip).take(limit).getMany();
         let totalItem: number = await queryBuilder.getCount();
@@ -29,18 +30,21 @@ export class OrderService {
         const totalPage: number = Math.ceil(totalItem / limit);
         console.log(totalPage);
 
-        return { dataOrder, totalPage, pages, limit };
+        return { dataOrder, totalPage, pages, limit }
     }
 
     async createOrder(body: any) {
         const { cart, order } = body;
+
         const infoOrder = {
             address: order.address,
             phone: order.phone,
             method: order.method,
             user_Id: order.user_Id,
             status: order.status,
+            total:order.total,
         };
+        
         try {
             // Tạo một đơn hàng mới
             const newOrder = await this.orderRepo.save(infoOrder);

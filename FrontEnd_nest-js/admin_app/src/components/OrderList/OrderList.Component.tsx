@@ -88,7 +88,7 @@ const OrderListComponent: React.FC = () => {
           </div>
         </div>
 
-        <table className="w-full table-auto">
+        <table className="w-full table-auto" border={2} >
           <thead className="align-bottom bg-gray-100">
             <tr className="text-base text-left text-gray-500 border-b border-gray-200 dark:border-gray-800">
               <th className="px-6 py-3 font-medium dark:text-gray-400">No.</th>
@@ -96,6 +96,7 @@ const OrderListComponent: React.FC = () => {
               <th className="px-6 py-3 font-medium dark:text-gray-400">Method</th>
               <th className="px-6 py-3 font-medium dark:text-gray-400">Created</th>
               <th className="px-6 py-3 font-medium dark:text-gray-400">Status</th>
+              <th className="px-6 py-3 font-medium dark:text-gray-400">Total</th>
               <th className="px-6 py-3 font-medium dark:text-gray-400 text-right ">
                 <span
                   // onClick={() => handleAction("CREATE")}
@@ -130,33 +131,20 @@ const OrderListComponent: React.FC = () => {
                     <td className="px-6 text-sm font-medium dark:text-gray-400">{format(parseISO(item.createdAt), "dd/MM/yyyy HH:mm:ss")}</td>
                     <td className="px-6 text-sm">
                       {
-                        item.is_Delete == 0
-                          ? (<span className='inline-block px-3 py-1 text-blue-700 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Enable</span>)
+                        item.status == 0
+                          ? (<span className='inline-block px-3 py-1 text-blue-700 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>New Order</span>)
                           : (<span className='inline-block px-3 py-1 text-red-700 bg-red-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Disable</span>)
                       }
                     </td>
-                    <td className="px-6 " colSpan={2}>
-                      <div className="flex ">
+                    <td className="px-6 text-sm font-medium dark:text-gray-400">
+                      <span className="inline-block px-2 py-1 text-gray-700 dark:text-gray-400">$ {item.total}</span>
+                    </td>
+                    <td className="px-6 text-right">
                         <span
                           // onClick={() => clickVer(item.id)}
-                          className="px-4 py-2 mr-2 text-sm text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            className="bi bi-three-dots" viewBox="0 0 16 16">
-                            <path
-                              d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-                          </svg>
+                          className="px-4 py-2 mr-5  text-2xl cursor-pointer text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
+                          ...
                         </span>
-                        {/* <span
-                          // onClick={() => handleAction("UPDATE", item)}
-                          className="px-4 py-2  text-sm text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
-                          Edit
-                        </span>
-                        <span
-                          // onClick={() => handleAction("DELETE", item)}
-                          className="px-4 py-2 ml-2  text-sm text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
-                          Disable
-                        </span> */}
-                      </div>
                     </td>
                   </tr>
                 );

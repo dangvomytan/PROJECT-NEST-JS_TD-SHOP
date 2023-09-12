@@ -21,6 +21,9 @@ export class OrderEntity{
     @Column()
     status:number;
 
+    @Column()
+    total:number;
+
     @CreateDateColumn()
     createdAt:Date;
 
@@ -39,5 +42,5 @@ export class OrderEntity{
         onDelete:'CASCADE',
         onUpdate:'CASCADE',
     })
-    tbl_orderitem:OrderItemEntity;
+    tbl_orderitem:OrderItemEntity[];
 }
