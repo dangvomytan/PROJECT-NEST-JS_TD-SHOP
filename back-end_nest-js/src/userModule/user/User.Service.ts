@@ -150,5 +150,9 @@ export class UserService {
             return res.status(200).json(newAccessToken);
         });
     }
-
+    async logoutUser(req: Request, res: Response) {
+        res.clearCookie("refreshToken")
+        refreshTokenArr = refreshTokenArr.filter(token => token !== req.cookies.refreshToken)
+        res.status(200).json("Logout successfully")
+      }
 }

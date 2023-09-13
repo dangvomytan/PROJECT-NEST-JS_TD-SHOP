@@ -32,9 +32,9 @@ export class ProductApi
       const res = await axiosClient.get(url);
       return res.data;
     }
-    static async getAllProVerWithPage(pages:number,filters:string):Promise<any> {
-      console.log(pages,filters);
-      const url:string = "api/v1/version/get-pro-with-all-ver?pages=" +pages+"&filters="+filters;
+    static async getAllProVerWithPage(pages:number,filters:string,search:string|null):Promise<any> {
+      // console.log(pages,filters);
+      const url:string = "api/v1/version/get-pro-with-all-ver?pages=" +pages+"&filters="+filters+"&search="+search;
       const res = await axiosSub.get(url);
       return res.data;
     }

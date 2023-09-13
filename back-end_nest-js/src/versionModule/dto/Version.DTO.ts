@@ -4,4 +4,5 @@ export class VersionDTO{
     filters:string;
     limit: number;
     filterValue:any;
+    search:string;
 }

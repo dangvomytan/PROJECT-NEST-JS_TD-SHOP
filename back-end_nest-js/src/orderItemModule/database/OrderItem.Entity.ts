@@ -31,14 +31,14 @@ export class OrderItemEntity {
     // order item => product
     @Column()
     product_Id: number;
-    @OneToMany(() => ProductEntity, (product) => product.tbl_orderitem)
+    @ManyToOne(() => ProductEntity, (product) => product.tbl_orderitem)
     @JoinColumn({ name: 'product_Id', })
-    tbl_product: ProductEntity;
+    tbl_product: ProductEntity[];
 
     // order item => version
     @Column()
     version_Id: number;
-    @OneToMany(() => VersionEntity, (version) => version.tbl_orderitem)
+    @ManyToOne(() => VersionEntity, (version) => version.tbl_orderitem)
     @JoinColumn({ name: 'version_Id', })
     tbl_version: VersionEntity;
 }

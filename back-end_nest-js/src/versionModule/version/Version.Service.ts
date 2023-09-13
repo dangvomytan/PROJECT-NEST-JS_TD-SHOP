@@ -92,6 +92,23 @@ export class VersionService {
         return { dataProduct, totalPage, pages, limit, filters };
     }
 
+    async findSearhProductWithAllVersion(query, pages: number = 1, limit: number = 6)
+    {
+        const { search } = query;
+        const skip: number = (pages - 1) * limit;
+        let queryBuilder: SelectQueryBuilder<VersionEntity>;
+        queryBuilder = this.versionRepo.createQueryBuilder('tbl_version')
+        .leftJoinAndSelect('tbl_version.tbl_product', 'tbl_product')
+        .where('tbl_product.product_Name LIKE:keyword ', { keyword: `%${search}%`  })
+        .orWhere('tbl_version.version_Name LIKE:keyword ', { keyword: `%${search}%`  });
+        // Thực hiện phân trang bằng cách bỏ qua các mục không cần thiết và lấy số lượng mục trên mỗi trang
+        const dataProduct = await queryBuilder.skip(skip).take(limit).getMany();
+        let totalItem: number = await queryBuilder.getCount();
+        // Tính toán tổng số trang
+        const totalPage: number = Math.ceil(totalItem / limit);
+
+        return { dataProduct, totalPage, pages, limit, search };
+    }
 
 
 

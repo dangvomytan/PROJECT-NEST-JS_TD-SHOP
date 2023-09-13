@@ -1,18 +1,19 @@
 import { format, parseISO } from "date-fns";
 import React, { Fragment, useRef, useEffect, useState } from "react";
 import { OrderApi } from "../../models/order.Model";
+import { Link } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const OrderListComponent: React.FC = () => {
   const [orderApi, setOrderApi] = useState([]);
   const [pages, setPages] = useState(1);
   const [limit, setLimit] = useState(5);
   const [totalPage, setTotalPage] = useState(1)
-  const [search, setSearch] = useState("")
+  const [sort, setSort] = useState("sortDate:DESC")
 
   // ham xu li goi du lieu ver
   const handleCallDataOrderApi = async () => {
-    const res: any = await OrderApi.getAll({ pages, limit, search });
-    console.log(res);
+    const res: any = await OrderApi.getAll({ pages, limit, sort });
     setOrderApi(res.dataOrder)
     setPages(res.pages);
     setTotalPage(res.totalPage);
@@ -31,22 +32,39 @@ const OrderListComponent: React.FC = () => {
     setPages(1)
   }
   // input search ---------------------------------------------------------------
-  const handleSearchChange = (e: any) => {
-    const searchValue = e.target.value; // Chuyển đổi giá trị từ chuỗi sang số nguyên
-    setSearch(searchValue);
-  }
-  // click search ---------------------------------------------------------------
-  const handleClickSearch = () => {
-    // handleCallDataVersionApi();
+  const handleSortChange = (e: any) => {
+    const sortValue = e.target.value;
+    setSort(sortValue);
+    handleCallDataOrderApi();
   }
   // pagination ---------------------------------------------------------------
   let pageNumbers: number[] = [];
   for (let i = 1; i <= totalPage; i++) {
     pageNumbers.push(i);
   }
+  //
+  const handleStatusChange = async (id: number, e: React.ChangeEvent<HTMLSelectElement>) => {
+    try {
+        const statusChange = e.target.value;
+        const valueUpdate = { status: statusChange };
+        await OrderApi.updateStatus(id, valueUpdate);
+        await handleCallDataOrderApi();
+        const notify = () => toast.success("Update successfully!");
+        notify();
+    } catch (err) {
+        console.error(err);
+        const notify = () => toast.error("Update error!");
+        notify();
+    }
+}
+
   //================================================================
   return (
     <div className="overflow-x-auto bg-white rounded shadow dark:bg-gray-900">
+     <Toaster
+        position="bottom-right"
+        reverseOrder={false}
+      />
       <div className="">
         <h2
           className="px-6 py-4 pb-0 text-2xl font-medium ">
@@ -70,12 +88,17 @@ const OrderListComponent: React.FC = () => {
           </div>
 
           <div className="flex px-4 py-2 my-2 border border-gray-300 rounded-md md:mb-0 dark:border-gray-400">
-            <input type="text"
-              name="search"
-              onChange={handleSearchChange}
-              className="w-full pr-4 text-base text-gray-700 outline-0 bg-white dark:text-gray-400 dark:bg-gray-900 placeholder-text-100 "
-              placeholder="search..." />
-            <button
+            <select
+              name="sort"
+              defaultValue={"sort=Date:DESC"}
+              onChange={handleSortChange}
+              className="w-full pr-4 text-base text-gray-700 outline-0 bg-white dark:text-gray-400 dark:bg-gray-900 placeholder-text-100 ">
+              <option value="sortDate:ASC">Date order (ASC)</option>
+              <option value="sortDate:DESC">Date order (DESC)</option>
+              <option value="sortStatus:ASC">Status order (ASC)</option>
+              <option value="sortStatus:DESC">Status order (DESC)</option>
+            </select>
+            {/* <button
               onClick={() => handleClickSearch()}
               className="flex items-center text-gray-700 dark:text-gray-400 dark:hover:text-blue-300 hover:text-blue-600">
               <span className="mr-2 text-base ">Go</span>
@@ -84,7 +107,7 @@ const OrderListComponent: React.FC = () => {
                 <path fill-rule="evenodd"
                   d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
               </svg>
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -97,17 +120,11 @@ const OrderListComponent: React.FC = () => {
               <th className="px-6 py-3 font-medium dark:text-gray-400">Created</th>
               <th className="px-6 py-3 font-medium dark:text-gray-400">Status</th>
               <th className="px-6 py-3 font-medium dark:text-gray-400">Total</th>
-              <th className="px-6 py-3 font-medium dark:text-gray-400 text-right ">
-                <span
-                  // onClick={() => handleAction("CREATE")}
-                  className=" py-2 px-4 mr-5  text-sm text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
-                  Create
-                </span>
-              </th>
+              <th></th>
             </tr>
           </thead>
           <tbody className="border-t">
-            {orderApi.length > 0 &&
+            {orderApi?.length > 0 &&
               orderApi?.map((item: any, index) => {
                 return (
                   <tr key={item.id}
@@ -130,26 +147,40 @@ const OrderListComponent: React.FC = () => {
                     </td>
                     <td className="px-6 text-sm font-medium dark:text-gray-400">{format(parseISO(item.createdAt), "dd/MM/yyyy HH:mm:ss")}</td>
                     <td className="px-6 text-sm">
-                      {
-                        item.status == 0
-                          ? (<span className='inline-block px-3 py-1 text-blue-700 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>New Order</span>)
-                          : (<span className='inline-block px-3 py-1 text-red-700 bg-red-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Disable</span>)
-                      }
+                      {item.status === 0 && (
+                        <span className='inline-block px-3 py-1 text-blue-700 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>New Order</span>
+                      )}
+                      {item.status === 1 && (
+                        <span className='inline-block px-3 py-1 text-yellow-700 bg-yellow-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Pending</span>
+                      )}
+                      {item.status === 2 && (
+                        <span className='inline-block px-3 py-1 text-violet-700 bg-violet-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Shipped</span>
+                      )}
+                      {item.status === 3 && (
+                        <span className='inline-block px-3 py-1 text-green-700 bg-green-100 rounded-full dark:bg-gray-800 dark:text-gray-400'>Processing</span>
+                      )}
                     </td>
                     <td className="px-6 text-sm font-medium dark:text-gray-400">
                       <span className="inline-block px-2 py-1 text-gray-700 dark:text-gray-400">$ {item.total}</span>
                     </td>
                     <td className="px-6 text-right">
-                        <span
-                          // onClick={() => clickVer(item.id)}
-                          className="px-4 py-2 mr-5  text-2xl cursor-pointer text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
-                          ...
-                        </span>
+                      <select
+                        onChange={(e) => handleStatusChange(item.id, e)}
+                        className="px-4 py-2 mr-5  text-base cursor-pointer text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
+                        <option className="text-base" value="1">Pending</option>
+                        <option className="text-base" value="2">Shipped</option>
+                        <option className="text-base" value="3">Processing</option>
+
+                      </select>
+                      <Link to={'/order-item/?order=' + item.id}
+                        className="px-4 py-2 mr-5  text-2xl cursor-pointer text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
+                        ...
+                      </Link>
                     </td>
                   </tr>
                 );
               })}
-            {orderApi.length == 0 && (
+            {orderApi?.length == 0 && (
               <tr className="px-6 border-1">
                 <td className="px-6 py-2 text-sm font-medium dark:text-gray-400" colSpan={8}>Not found version</td>
               </tr>

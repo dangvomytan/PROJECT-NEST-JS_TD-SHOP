@@ -8,6 +8,7 @@ import OrderPage from '../pages/Order/Order.Page'
 import VersionPage from '../pages/Version/Version.Page'
 import AdminPage from '../pages/admin/Admin.Page'
 import UserPage from '../pages/user/User.Page'
+import OrderItemPage from '../pages/Order/OrderItem.Page'
 
 
 const Router:React.FC = () => {
@@ -19,6 +20,7 @@ const Router:React.FC = () => {
         <Route path="product" element={<ProductPage/>}/>
         <Route path="version" element={<VersionPage/>}/>
         <Route path="order" element={<OrderPage/>}/>
+        <Route path="order-item" element={<OrderItemPage/>}/>
         <Route path="admin" element={<AdminPage/>}/>
         <Route path="user" element={<UserPage/>}/>
         </Route>

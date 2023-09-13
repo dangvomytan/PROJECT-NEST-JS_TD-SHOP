@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const CartComponent: React.FC = () => {
+const CartComponent: React.FC<any> = ({handleSetCart}) => {
 
   const [cart, setCart] = useState<ICart[]>([]);
   const [subTotal, setSubTotal] = useState<number>(0);
@@ -28,6 +28,7 @@ const CartComponent: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const DataApi: any = await cartItemApi.getCartItemByUser(userLogin?.id) || null;
     setCart(DataApi);
+    handleSetCart(DataApi);
   };
   useEffect(() => {
     handleCallData();

@@ -1,46 +1,35 @@
+import { Menu, Transition } from '@headlessui/react'
+import { ChevronDownIcon, FunnelIcon, Squares2X2Icon } from '@heroicons/react/24/outline'
 import { Fragment, useEffect, useState } from 'react'
-import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
-import PaginationComponent from '../../pagination/Pagination.Component'
-import FilterComponent from '../../filters/filter.Component'
-import { ProductApi } from '../../../models/product.Model'
+import FilterComponent from '../filters/filter.Component'
+import PaginationComponent from '../pagination/Pagination.Component'
+import { ProductApi } from '../../models/product.Model'
 import { useDispatch } from 'react-redux'
-import { setProducts } from '../../../redux/slice/product.Slice'
+import { setProducts } from '../../redux/slice/product.Slice'
+import { useLocation } from 'react-router-dom'
 
-const sortOptions = [
-  { name: 'Name'},
-  { name: 'Date'},
-]
-
-
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
-
-const ProductListComponent: React.FC = () => {
+const SearchComponent: React.FC = () => {
   const dispatch = useDispatch()
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const searchValue = searchParams.get('search' || '');
+
 
   const [pages, setPages] = useState<number>(1);
   const [filters, setFilters] = useState<string>('');
-  const [search, setSearch] = useState<string>('');
 
-  //ham xu li goi api
+  // ham xu li goi api
   const handleCallData = async () => {
     try {
-      const dataApi: any = await ProductApi.getAllProVerWithPage(pages, filters,search);
+      const dataApi: any = await ProductApi.getAllProVerWithPage(pages, filters,searchValue);
       dispatch(setProducts(dataApi))
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
-
-
   useEffect(() => {
     handleCallData();
-  }, [pages, filters])
-
+  }, [pages, filters, searchValue])
   return (
     <div>
       <div>
@@ -71,22 +60,22 @@ const ProductListComponent: React.FC = () => {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
-                      {sortOptions.map((option) => (
-                        <Menu.Item key={option.name}>
-                          {({ active }) => (
-                            <a
-                              className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm'
-                              )}
-                            >
-                              {option.name}
-                            </a>
-                          )}
-                        </Menu.Item>
-                      ))}
-                    </div>
+                    {/* <div className="py-1">
+                        {sortOptions.map((option) => (
+                          <Menu.Item key={option.name}>
+                            {({ active }) => (
+                              <a
+                                className={classNames(
+                                  active ? 'bg-gray-100' : '',
+                                  'block px-4 py-2 text-sm'
+                                )}
+                              >
+                                {option.name}
+                              </a>
+                            )}
+                          </Menu.Item>
+                        ))}
+                      </div> */}
                   </Menu.Items>
                 </Transition>
               </Menu>
@@ -98,7 +87,7 @@ const ProductListComponent: React.FC = () => {
               <button
                 type="button"
                 className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
-                // onClick={() => setMobileFiltersOpen(true)}
+              // onClick={() => setMobileFiltersOpen(true)}
               >
                 <span className="sr-only">Filters</span>
                 <FunnelIcon className="h-5 w-5" aria-hidden="true" />
@@ -129,7 +118,6 @@ const ProductListComponent: React.FC = () => {
         </main>
       </div>
     </div>
-  );
-};
-
-export default ProductListComponent;
+  )
+}
+export default SearchComponent

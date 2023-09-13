@@ -30,9 +30,9 @@ export class VersionController {
     // Lấy tất cả danh sách product với version (phan trang)
     @Get('/get-pro-with-all-ver')
     getAllProductWithAllVersion(@Query() query:VersionDTO) {
-        console.log(query);
+        console.log("version",query);
         
-        const {filters,pages,limit} = query; 
+        const {filters,pages,limit,search} = query; 
         let filterValue:{ [key: string]: any } | null = null;
         if (filters) {
             const [key, value] = filters.split('=');
@@ -47,6 +47,11 @@ export class VersionController {
         if (filterValue && filterValue.filBrd != null)
         {
             return this.versionService.findAllProductFilterByBrand({...query,filterValue },pages,limit)
+        }
+        //Search
+        if(search)
+        {
+            return this.versionService.findSearhProductWithAllVersion({...query},pages,limit)
         }
         // Khong xet dieu kien
         return this.versionService.findAllProductWithAllVersion({...query},pages,limit)

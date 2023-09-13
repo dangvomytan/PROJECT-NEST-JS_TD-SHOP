@@ -1,7 +1,7 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Query } from "@nestjs/common";
 import { OrderItemService } from "./OrderItem.Service";
 
-@Controller('api/v1/orderitem')
+@Controller('api/v1/order-item')
 export class OrderItemController
 {
     constructor(
@@ -9,9 +9,9 @@ export class OrderItemController
     ){}
     
     @Get()
-    getAllVersions()
-    {
-    console.log('all versions');
-    return this.orderItemService.findAll();
+    getAllOrderItemById(@Query() query){
+        const {id, pages, limit} = query
+        console.log("order item",query);
+        return this.orderItemService.findAllOrderItemById(id ,pages, limit);
     }
 }
