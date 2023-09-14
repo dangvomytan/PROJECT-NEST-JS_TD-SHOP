@@ -3,8 +3,8 @@ import axiosClient from "../api/AxiosClient";
 
 
 export interface IUser {
-  id: any;
-  tbl_cart: any;
+  id?: any;
+  tbl_cart?: any;
   first_Name?: string;
   last_Name?: string;
   email?: string;

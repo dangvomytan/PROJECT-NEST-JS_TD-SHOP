@@ -5,6 +5,9 @@ import { IUser } from "../../models/user.Model";
 
 const InfoUserComponent: React.FC = () => {
     const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
+    if (userLogin === null) {
+      window.location.href = '/login';
+    }
     return (
         <form action="#" method="post">
             <div className="px-4 mb-6">

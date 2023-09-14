@@ -2,21 +2,22 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { OrderApi } from "../../models/order.Model";
-import toast from "react-hot-toast";
 import { format, parseISO } from "date-fns";
 import { IUser } from "../../models/user.Model";
 
 
-const HistoryOrderComponent: React.FC<any> = ({userLogin}) => {
+const HistoryOrderComponent: React.FC = () => {
 const [orderApi, setOrderApi] = useState([]);
 const [pages, setPages] = useState(1);
 const [limit, setLimit] = useState(5);
 const [totalPage, setTotalPage] = useState(1)
 const [sort, setSort] = useState("sortDate:DESC")
-
+const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
+if (userLogin === null) {
+  window.location.href = '/login';
+}
 // ham xu li goi du lieu ver
 const handleCallDataOrderApi = async () => {
-    const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
   const res: any = await OrderApi.getAll({ pages, limit, sort });
   const fiterOrder = res.dataOrder?.filter((item:any)=>userLogin?.id === item.user_Id)
   setOrderApi(fiterOrder)

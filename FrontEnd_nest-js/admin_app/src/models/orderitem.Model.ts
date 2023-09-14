@@ -13,6 +13,4 @@ export class OrderItemApi {
        const res = await axiosClient.get(url);
        return res.data;
      }
-
-
    }

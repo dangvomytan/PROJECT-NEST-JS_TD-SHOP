@@ -76,7 +76,7 @@ export class VersionService {
         return { dataProduct, totalPage, pages, limit, filters };
     }
     // loc theo ten product
-    async findAllProductFilterByBrand(query, pages: number = 1, limit: number = 6) {
+    async findAllProductFilterByBrand(query, pages: number = 1, limit: number = 12) {
         const { filters, filterValue } = query;
         const skip: number = (pages - 1) * limit;
         let queryBuilder: SelectQueryBuilder<VersionEntity>;

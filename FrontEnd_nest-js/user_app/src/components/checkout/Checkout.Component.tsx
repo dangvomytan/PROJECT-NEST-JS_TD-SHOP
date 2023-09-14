@@ -257,7 +257,7 @@ const CheckoutComponent: React.FC = () => {
                   value={formData.method}
                 >
                   <option>--- Select ---</option>
-                  <option value="card">card</option>
+                  <option value="paypal">Paypal</option>
                 </select>
               </div>
             </div>
@@ -278,10 +278,8 @@ const CheckoutComponent: React.FC = () => {
               <p className="text-2xl font-semibold text-gray-900">$ {subTotal}</p>
             </div>
           </div>
-          <button
-            onClick={() => clickOrder()}
-            className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">Place Order
-          </button>
+          <div className='mt-5'> 
+          </div>
           <PayPalButtons
             style={{
               layout: "horizontal",

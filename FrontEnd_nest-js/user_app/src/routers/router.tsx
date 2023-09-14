@@ -10,7 +10,6 @@ import CheckoutComponent from "../components/checkout/Checkout.Component";
 import CartComponent from "../components/cart/Cart.Component";
 import PaymentComponent from "../components/payment/Payment.Component";
 import ShopComponent from "../components/shop/shop/Shop.Component";
-import ProfileComponent from "../components/profile/Profile.Component";
 import SearchComponent from "../components/search/Search.Component";
 import ProfileLayout from "../layouts/profile/Profile.Layout";
 import InfoUserComponent from "../components/profile/InfoUser.Component";
@@ -30,7 +29,9 @@ const Router = () => {
         <Route path="shop" element={<ShopComponent/>} />
         <Route path="search" element={<SearchComponent/>} />
         <Route path="search/detail" element={<DetailComponent/>} />
+        <Route path="detail" element={<DetailComponent/>} />
         <Route path="shop/detail" element={<DetailComponent/>} />
+        
         <Route path="cart" element={<CartComponent/>} />
         <Route path="checkout" element={<CheckoutComponent />} />
         <Route path="payment" element={<PaymentComponent/>} />

@@ -4,43 +4,55 @@ import React from 'react'
 
 const FooterComponent:React.FC = () => {
   return (
-    <div>
-<footer className="bg-gray-900 text-white">
-      {/* <div className="container mx-auto py-8 flex flex-col md:flex-row items-center justify-between">
-        <div className="footer-links space-y-2 md:space-y-0 md:flex md:space-x-6">
-          <a href="/" className="hover:text-blue-500">
-            Trang chủ
-          </a>
-          <a href="/" className="hover:text-blue-500">
-            Thông tin
-          </a>
-          <a href="/" className="hover:text-blue-500">
-            Bảo hành
-          </a>
-          <a href="/user/pages/shop.html" className="hover:text-blue-500">
-            Cửa hàng
-          </a>
-          <a href="/" className="hover:text-blue-500">
-            Liên hệ
-          </a>
+    <footer className="bg-gray-800">
+    <div className="mx-auto grid max-w-screen-xl gap-y-8 gap-x-12 px-4 py-10 md:grid-cols-2 xl:grid-cols-4 xl:px-10">
+      <div className="max-w-sm">
+        <div className="mb-6 flex h-12 items-center space-x-2">
+          <span className="text-2xl font-semibold">TD-<span className="text-blue-600">Shop</span>.</span>
         </div>
-        <div className="footer-social mt-4 md:mt-0">
-          <a href="#" className="text-blue-500 hover:text-blue-700">
-            <i className="fab fa-facebook"></i>
-          </a>
-          <a href="#" className="text-blue-500 hover:text-blue-700">
-            <i className="fab fa-instagram"></i>
-          </a>
-          <a href="#" className="text-blue-500 hover:text-blue-700">
-            <i className="fab fa-twitter"></i>
-          </a>
-        </div>
-      </div> */}
-      <div className="bg-gray-800 py-2 text-center ">
-        <p className="text-gray-500">&copy; 2023 TanDangStore. All Rights Reserved.</p>
+        <div className="text-gray-500">This is web of td-shop</div>
       </div>
-    </footer>
+      <div className="">
+        <div className="mt-4 mb-2 text-gray-50 font-medium xl:mb-4">Address</div>
+        <div className="text-gray-500">
+           363 NGuyen Huu Tho, <br />
+          Cam Le, <br />
+          Da Nang, VN
+        </div>
+      </div>
+      <div className="">
+        <div className="mt-4 mb-2 text-gray-50  font-medium xl:mb-4">Links</div>
+        <nav aria-label="Footer Navigation" className="text-gray-500">
+          <ul className="space-y-3">
+            <li><a className="hover:text-blue-600 hover:underline" href="#">Pricing</a></li>
+            <li><a className="hover:text-blue-600 hover:underline" href="#">Demo</a></li>
+            <li><a className="hover:text-blue-600 hover:underline" href="#">Press</a></li>
+            <li><a className="hover:text-blue-600 hover:underline" href="#">Support Hub</a></li>
+            <li><a className="hover:text-blue-600 hover:underline" href="#">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div className="">
+        <div className="mt-4 mb-2 text-gray-50  font-medium xl:mb-4">Subscribe to our Newsletter</div>
+        <div className="flex flex-col">
+          <div className="mb-4">
+            <input type="email" className="focus:outline mb-2 block h-14 w-full rounded-xl bg-gray-200 px-4 sm:w-80 focus:outline-none focus:ring-1 focus:ring-blue-600" placeholder="Enter your email" />
+            <button className="block rounded-xl bg-blue-600 px-6 py-3 font-medium text-white">Subscribe</button>
+          </div>
+        </div>
+      </div>
     </div>
+    <div className="bg-gray-950">
+      <div className="mx-auto flex max-w-screen-xl flex-col gap-y-4 px-4 py-3 text-center text-gray-500 sm:flex-row sm:justify-between sm:text-left">
+        <div className="">&copy; 2023 TanDangStore. All Rights Reserved.</div>
+        <div className="">
+          <a className="" href="#">Privacy Policy</a>
+          <span>|</span>
+          <a className="" href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
   )
 }
 

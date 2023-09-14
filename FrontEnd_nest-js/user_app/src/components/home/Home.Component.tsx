@@ -1,9 +1,14 @@
 import React from "react";
+import FeaturedComponent from "../featured/Featured.Component";
+import GalleryComponent from "./gallery.Component";
+import NewProductComponent from "../shop/NewProduct/NewProduct.Component";
 
 const HomeComponent: React.FC = () => {
   return (
-      <div className="h-96 border 1  border-cyan-500">
-      home
+      <div className="">
+        <FeaturedComponent/>
+        <NewProductComponent/>
+        <GalleryComponent/>
       </div>
 
   );

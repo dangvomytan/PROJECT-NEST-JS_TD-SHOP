@@ -25,7 +25,7 @@ const RegisterComponent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-        // await UserApi.register(formData); 
+        await UserApi.register(formData); 
         toast.success("Create successfully");
         navigate("/login");
       }
@@ -193,7 +193,6 @@ const RegisterComponent: React.FC = () => {
             name="email"
             onChange={handleChange}
             value={formData.email}
-            
             className="border-1 peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=" "
           />
@@ -234,7 +233,7 @@ const RegisterComponent: React.FC = () => {
         <p className="text-sm text-gray-600">
            have an account?{" "}
           <a
-            href="#"
+            href="/login"
             className="font-bold text-blue-600 no-underline hover:text-blue-400"
           >
             Sign in

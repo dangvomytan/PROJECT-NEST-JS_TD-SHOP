@@ -1,3 +1,4 @@
+import { AdminEntity } from "src/adminModule/database/Admin.Entity";
 import { CartItemEntity } from "src/cartItemModule/database/CartItem.Entity";
 import { CategoryEntity } from "src/categoryModule/database/category.entity"
 import { OrderItemEntity } from "src/orderItemModule/database/OrderItem.Entity";
@@ -23,7 +24,8 @@ export const config:MysqlConnectionOptions={
       UserEntity,
       CartItemEntity,
       OrderEntity,
-      OrderItemEntity    
+      OrderItemEntity,
+      AdminEntity    
     ],
     synchronize: true
   }

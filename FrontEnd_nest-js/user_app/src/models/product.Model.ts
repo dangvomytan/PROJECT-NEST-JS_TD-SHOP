@@ -29,7 +29,7 @@ export class ProductApi
 {
      static async getAllProVer():Promise<Array<IProduct>> {
       const url:string = "api/v1/version/get-pro-with-all-ver";
-      const res = await axiosClient.get(url);
+      const res = await axiosSub.get(url);
       return res.data;
     }
     static async getAllProVerWithPage(pages:number,filters:string,search:string|null):Promise<any> {
@@ -42,7 +42,7 @@ export class ProductApi
     //Lấy toàn bọ thông tin của product bằng id
     static async getAllInfoProductById(id:number):Promise<any> {
       const url:string = `api/v1/version/get-pro-with-ver-by-id-ver/${id}`;
-      const res:any = await axiosClient.get(url);
+      const res:any = await axiosSub.get(url);
       return res.data;
     }
 

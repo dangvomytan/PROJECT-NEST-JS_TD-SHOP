@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom";
 import { OrderApi } from "../../models/order.Model";
+import { IUser } from "../../models/user.Model";
 
 const OrderItemComponent: React.FC = () => {
   const [orderItemApi, setOrderItemApi] = useState([]);
   const [pages, setPages] = useState(1);
   const [limit, setLimit] = useState(5);
   const [totalPage, setTotalPage] = useState(1)
-
+  const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
+  if (userLogin === null) {
+    window.location.href = '/login';
+  }
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const orderParam = searchParams.get('order');

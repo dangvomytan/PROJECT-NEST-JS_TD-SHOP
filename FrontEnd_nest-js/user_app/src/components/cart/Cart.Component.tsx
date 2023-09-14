@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const CartComponent: React.FC<any> = ({handleSetCart}) => {
+const CartComponent: React.FC = () => {
 
   const [cart, setCart] = useState<ICart[]>([]);
   const [subTotal, setSubTotal] = useState<number>(0);
@@ -22,13 +22,14 @@ const CartComponent: React.FC<any> = ({handleSetCart}) => {
   if (userLogin === null) {
     window.location.href = '/login';
   }
-  // console.log(userLogin?.id);
+  console.log(userLogin?.id);
  
   const handleCallData = async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const DataApi: any = await cartItemApi.getCartItemByUser(userLogin?.id) || null;
+    console.log(DataApi);
+    
     setCart(DataApi);
-    handleSetCart(DataApi);
   };
   useEffect(() => {
     handleCallData();
@@ -85,7 +86,7 @@ const CartComponent: React.FC<any> = ({handleSetCart}) => {
   //Dung userEffect de cap nhat subtotal
   useEffect(() => {
     let sumtotal = 0;
-    if (cart.length > 0) {
+    if (cart?.length > 0) {
       cart?.map((item) => {
         const price = Number(item.quantity) * Number(item.tbl_version.price); // Giá của CartItem
         sumtotal += price;
@@ -148,7 +149,7 @@ const CartComponent: React.FC<any> = ({handleSetCart}) => {
         position="bottom-right"
         reverseOrder={false}
       />
-      <section className="h-screen bg-gray-100 py-0">
+      <section className=" bg-gray-100 py-0">
         <div className='bg-white'>
           <div className="max-w-6xl m-auto flex flex-col items-center border-b bg-white py-4 sm:flex-row sm:px-10 lg:px-20 xl:px-32">
             <a href="/cart" className="text-2xl font-bold text-gray-800">Cart</a>
