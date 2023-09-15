@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { VersionEntity } from "../database/Version.Entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { VersionDTO } from "../dto/Version.DTO";
+import { version } from "os";
 
 
 @Injectable()
@@ -16,7 +17,7 @@ export class VersionService {
         const skip: number = (pages - 1) * limit;
         let queryBuilder: SelectQueryBuilder<VersionEntity>;
         queryBuilder = this.versionRepo.createQueryBuilder('tbl_version')
-        .where('tbl_version.product_Id = :id', { id: id });
+        .where('tbl_version.product_Id = :id', { id: id })
         // Thực hiện phân trang bằng cách bỏ qua các mục không cần thiết và lấy số lượng mục trên mỗi trang
         const dataVersion = await queryBuilder.skip(skip).take(limit).getMany();
         let totalItem: number = await queryBuilder.getCount();
@@ -127,5 +128,84 @@ export class VersionService {
         });
         //   console.log(tbl_version);
         return { ...product, tbl_version };
+    }
+
+    updateimage(data, id)
+    {
+       const version={
+        product_Id: data.product_Id,
+        version_Name:data.version_Name,
+        price:data.price,
+        inventory:data.inventory,
+        specification:data.specification,
+        description:data.description,
+        }
+        console.log(1111,version)
+        console.log(999,data)
+    }
+    async createVersion(data)
+    {
+        try{
+            const newVer={
+                product_Id: data.product_Id,
+                version_Name:data.version_Name,
+                price:data.price,
+                inventory:data.inventory,
+                specification:data.specification,
+                description:data.description,
+                image:data.image,
+                id_Delete:0,
+                }
+            const newProduct = this.versionRepo.create(newVer);
+            return await this.versionRepo.save(newProduct);
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+    }
+    async updateVersion(data:any)
+    {
+        try{
+            const existingVersion:any = await this.versionRepo.findOne({where: { id: data.id }})
+            if(existingVersion)
+            {
+                existingVersion.product_Id = data.product_Id;
+                existingVersion.version_Name = data.version_Name;
+                existingVersion.price = data.price;
+                existingVersion.inventory = data.inventory;
+                existingVersion.specification = data.specification;
+                existingVersion.description = data.specification;
+                existingVersion.image = data.image;
+                return await this.versionRepo.save(existingVersion);
+            }
+            else
+            {
+                return { message: 'Error updating product' }
+            }
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+    }
+    async disableVersion(data:any)
+    {
+        try{
+            const existingVersion:any = await this.versionRepo.findOne({where: { id: data.id }})
+            if(existingVersion)
+            {
+                existingVersion.is_Delete = 1;
+                return await this.versionRepo.save(existingVersion);
+            }
+            else
+            {
+                return { message: 'Error updating product' }
+            }
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
     }
 }

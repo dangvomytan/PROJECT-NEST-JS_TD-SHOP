@@ -330,7 +330,8 @@ const ProductListComponent: React.FC = () => {
           <thead className="align-bottom bg-gray-100">
                   <tr className="text-base text-left text-gray-500 border-b border-gray-200 dark:border-gray-800">
                     <th className="flex items-center py-3 pl-6 font-medium dark:text-gray-400">No.</th>
-                    <th className="px-6 py-3 font-medium dark:text-gray-400"> Product name</th>
+                    <th className="px-6 py-3 font-medium dark:text-gray-400">Product name</th>
+                    <th className="px-6 py-3 font-medium dark:text-gray-400">Category</th>
                     <th className="px-6 py-3 font-medium dark:text-gray-400">Created</th>
                     <th className="px-6 py-3 font-medium dark:text-gray-400">Description</th>
                     <th className="px-6 py-3 font-medium dark:text-gray-400">Status</th>
@@ -353,6 +354,7 @@ const ProductListComponent: React.FC = () => {
                             <p className="dark:text-gray-400">{index + 1}</p>
                           </td>
                           <td className="px-6 text-sm font-medium dark:text-gray-400">{item.product_Name}</td>
+                          <td className="px-6 text-sm font-medium dark:text-gray-400">{item.tbl_category.category_Name}</td>
                           <td className="px-6 text-sm font-medium dark:text-gray-400">{format(parseISO(item.createdAt), "dd/MM/yyyy HH:mm:ss")}</td>
                           <td className="px-6 text-sm font-medium dark:text-gray-400">
                             <span className="inline-block px-2 py-1 text-gray-700 dark:text-gray-400">{item.description}</span>

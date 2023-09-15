@@ -39,7 +39,7 @@ const MenuComponent: React.FC = () => {
       {/* <hr className="h-px mt-0 bg-transparent bg-gradient-to-r from-transSparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent" /> */}
       {/* <div className="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full"> */}
         <ul className="flex flex-col pl-0 mb-0">
-          <li className="mt-0.5 w-full">
+          {/* <li className="mt-0.5 w-full">
             <a
               className="py-2.7 bg-blue-500/13 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold text-slate-700 transition-colors"
               href=""
@@ -51,15 +51,15 @@ const MenuComponent: React.FC = () => {
                 Dashboard
               </span>
             </a>
-          </li>
+          </li> */}
 
-          <li className="mt-0.5 w-full">
+          <li className="mt-3 w-full">
             <a
-              className=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-              href="/home"
+              className=" dark:text-white dark:opacity-80 py-2.7 text-lg ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+              href="/admin/dashbord"
             >
               <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                <i className="relative top-0 text-sm leading-normal text-orange-500 ni ni-calendar-grid-58"></i>
+                <i className="relative top-0 text-2xl  leading-normal text-orange-500 ni ni-calendar-grid-58"></i>
               </div>
               <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
                 Home
@@ -69,25 +69,25 @@ const MenuComponent: React.FC = () => {
 
           <li className="mt-0.5 w-full">
             <a
-              className=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-              href="/category"
+              className=" dark:text-white dark:opacity-80 py-2.7 text-lg ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+              href="/admin/order"
             >
               <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center fill-current stroke-0 text-center xl:p-2.5">
-                <i className="relative top-0 text-sm leading-normal text-emerald-500 ni ni-credit-card"></i>
+                <i className="relative top-0 text-2xl  leading-normal text-emerald-500 ni ni-credit-card"></i>
               </div>
               <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
-                Category
+                Order
               </span>
             </a>
           </li>
 
           <li className="mt-0.5 w-full">
             <a
-              className=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-              href="/product"
+              className=" dark:text-white dark:opacity-80 py-2.7 text-lg ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+              href="/admin/product"
             >
               <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                <i className="relative top-0 text-sm leading-normal text-cyan-500 ni ni-app"></i>
+                <i className="relative top-0 text-2xl  leading-normal text-cyan-500 ni ni-app"></i>
               </div>
               <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
               Product
@@ -95,33 +95,13 @@ const MenuComponent: React.FC = () => {
             </a>
           </li>
 
-          <li className="w-full mt-4">
-            <h6 className="pl-6 ml-2 text-xs font-bold leading-tight uppercase dark:text-white opacity-60">
-              Account pages
-            </h6>
-          </li>
-
-          <li className="mt-0.5 w-full">
-            <a
-              className=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-              href="/admin"
-            >
-              <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                <i className="relative top-0 text-sm leading-normal text-slate-700 ni ni-single-02"></i>
-              </div>
-              <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
-                Admin
-              </span>
-            </a>
-          </li>
-
           <li className="mt-0.2 w-full">
             <a
-              className=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-              href="/user"
+              className=" dark:text-white dark:opacity-80 py-2.7 text-lg ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+              href="/admin/user"
             >
               <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                <i className="relative top-0 text-sm leading-normal text-slate-700 ni ni-single-02"></i>
+                <i className="relative top-0 text-2xl leading-normal text-slate-700 ni ni-single-02"></i>
               </div>
               <span className="ml-1 duration-300 opacity-100 pointer-events-none ease">
                 User

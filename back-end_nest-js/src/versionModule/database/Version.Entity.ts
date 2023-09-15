@@ -23,7 +23,7 @@ export class VersionEntity {
     @Column('text')
     specification: string | null;
 
-    @Column()
+    @Column({ default: 0 })
     is_Delete: number;
 
     @Column('text')

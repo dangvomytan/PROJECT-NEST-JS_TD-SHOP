@@ -54,13 +54,15 @@ const HeaderComponent: React.FC = () => {
               <li className="flex items-center">
                 <a
                   href="#"
-                  className="block px-0 py-2 text-sm font-semibold text-black transition-all ease-nav-brand"
+                  className="flex px-0 py-2 text-sm font-semibold text-black transition-all ease-nav-brand"
                 >
                   <div className="text-2xl">
                     <FaUserAlt />
                   </div>
-
-                  {/* <span className="hidden sm:inline">Sign In</span> */}
+                  <div>
+                    <span className="hidden sm:inline">Sign In</span>
+                  </div>
+                  
                 </a>
               </li>
               <li className="flex items-center pl-4 xl:hidden">

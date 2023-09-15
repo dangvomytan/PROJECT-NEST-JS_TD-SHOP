@@ -16,6 +16,7 @@ export class ProductService {
             const skip: number = (pages - 1) * limit;
             let queryBuilder: SelectQueryBuilder<ProductEntity>;
             queryBuilder = this.productRepo.createQueryBuilder('tbl_product')
+            .leftJoinAndSelect("tbl_product.tbl_category", "tbl_category")
             // Thực hiện phân trang bằng cách bỏ qua các mục không cần thiết và lấy số lượng mục trên mỗi trang
             const dataProduct = await queryBuilder.skip(skip).take(limit).getMany();
             let totalItem: number = await queryBuilder.getCount();
@@ -52,4 +53,70 @@ export class ProductService {
         
     //     return result;
     // }
+    async createProduct(data:ProductEntity)
+    {
+        try {
+              const newProduct = await this.productRepo.create({
+                product_Name: data.product_Name,
+                is_Delete: 0,
+                description: data.description,
+                category_Id: data.category_Id, 
+              });
+              const result = await this.productRepo.save(newProduct);
+              return({message:'create success',result});
+            // }
+          } catch (error: any) {
+            console.log(error.message);
+           return({error:'Internal Server Error'});
+          }
+    }
+    async updateProduct(data: ProductEntity) {
+        try {
+          const existingProduct = await this.productRepo.findOne({
+            where: { id: data.id },
+          });
+      
+          if (!existingProduct) {
+            return { message: 'Product not found' };
+          } else {
+            // Cập nhật thông tin của sản phẩm
+            existingProduct.product_Name = data.product_Name;
+            // existingProduct.is_Delete = 0;
+            existingProduct.description = data.description;
+            existingProduct.category_Id = data.category_Id;
+      
+            // Lưu thông tin sản phẩm đã cập nhật
+            const updatedProduct = await this.productRepo.save(existingProduct);
+      
+            return { message: 'Update success', updatedProduct };
+          }
+        } catch (error) {
+          console.log('Error updating product:', error);
+          return { error: 'Internal Server Error' };
+        }
+      }
+    async disableProduct(data: ProductEntity)
+    {
+        try {
+            const existingProduct = await this.productRepo.findOne({
+              where: { id: data.id },
+            });
+        
+            if (!existingProduct) {
+              return { message: 'Product not found' };
+            } else {
+              // Cập nhật thông tin của sản phẩm
+              existingProduct.is_Delete = 1;
+              // Lưu thông tin sản phẩm đã cập nhật
+              const updatedProduct = await this.productRepo.save(existingProduct);
+        
+              return { message: 'disablle success', updatedProduct };
+            }
+          } catch (error) {
+            console.log('Error:', error);
+            return { error: 'Internal Server Error' };
+          }
+    }
+
+
 }

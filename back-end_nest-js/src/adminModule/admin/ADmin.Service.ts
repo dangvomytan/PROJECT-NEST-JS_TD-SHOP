@@ -5,6 +5,7 @@ import { Response, Request } from "express";
 import * as jwt from 'jsonwebtoken';
 import sceret from "../database/jwt";
 import { AdminEntity } from "../database/Admin.Entity";
+import { AdminDTO } from "../dto/Admin.dto";
 
 const bcrypt = require('bcrypt');
 
@@ -46,79 +47,79 @@ export class AdminService {
     //     return { dataUser, totalPage, pages, limit };
     // }
 
-    // async registerUser(body: any) {
-    //     const { userName , password } = body
-    //     try {
-    //         // Kiểm tra xem email đã tồn tại chưa
-    //         const existingEmail = await this.adminRepo.findOne({ where: { user_Name: userName } })
-    //         if (existingEmail) {
-    //             return { status: '404', message: 'Email already exists' }
-    //         }
-    //         else {
-    //             // Mã hóa mật khẩu
-    //             const saltRounds = 10;
-    //             const hashPassword = await bcrypt.hash(password, saltRounds);
-    //             // Tạo một người dùng mới
-    //             const newUser = await this.adminRepo.create({
-    //                 full_Name: body.full_Name,
-    //                 user_Name: body.user_Name,
-    //                 password: hashPassword,
-    //                 role: body.role,
-    //                 is_Delete: 0,
-    //             });
-    //             await this.adminRepo.save(newUser);
-    //             return { status: '200', message: 'User created successfully' };
-    //         }
-    //     }
-    //     catch (err) {
-    //         console.error(err);
-    //         throw new Error('Internal Server Error');
-    //     }
-    // }
+    async registerAdmin(body: any) {
+        const { userName , password } = body
+        try {
+            // Kiểm tra xem email đã tồn tại chưa
+            const existingEmail = await this.adminRepo.findOne({ where: { user_Name: userName } })
+            if (existingEmail) {
+                return { status: '404', message: 'Email already exists' }
+            }
+            else {
+                // Mã hóa mật khẩu
+                const saltRounds = 10;
+                const hashPassword = await bcrypt.hash(password, saltRounds);
+                // Tạo một người dùng mới
+                const newUser = await this.adminRepo.create({
+                    full_Name: body.full_Name,
+                    user_Name: body.user_Name,
+                    password: hashPassword,
+                    role: body.role,
+                    is_Delete: 0,
+                });
+                await this.adminRepo.save(newUser);
+                return { status: '200', message: 'User created successfully' };
+            }
+        }
+        catch (err) {
+            console.error(err);
+            throw new Error('Internal Server Error');
+        }
+    }
 
-    // async loginUser(data: UserDTO, res: Response) {
-    //     const { user_Name, password } = data
-    //     try {
-    //         // Kiểm tra xem email đã tồn tại chưa
-    //         const loginUser = await this.adminRepo.findOne({ where: { user_Name: user_Name } })
-    //         if (!loginUser) {
-    //             return res.status(401).json({ message: 'Email not found' })
-    //         }
-    //         else {
-    //             const myPass = await bcrypt.compare(password, loginUser.password);
-    //             console.log(1111, myPass);
-    //             // giải mã pass
-    //             if (myPass) {
-    //                 // console.log(">>>",loginUser); 
-    //                 //tạo access token
-    //                 const accessToken = jwt.sign({ ...loginUser }, sceret.sceretKey, { expiresIn: "7d" });
-    //                 // Token hết hạn trong vòng 7day , vd thêm : 30d ,30m
-    //                 const accessTokenRefresh = jwt.sign({ ...loginUser }, sceret.sceretKeyRefresh, { expiresIn: "365d" })
-    //                 // Tạo refreshToken để dự trữ
-    //                 refreshTokenArr.push(accessTokenRefresh)
-    //                 // push refresh token vào 1 mảng để lưu trữ
-    //                 const { password, ...data } = loginUser;
-    //                 //loại bỏ password ra khỏi phần data trả về frontend,destructuring
-    //                 res.cookie("accessTokenRefresh", accessTokenRefresh, {//Lưu refreshToken vào cookie khi đăng nhập thành công
-    //                     httpOnly: true,
-    //                     secure: true,
-    //                     sameSite: "none"
-    //                 })
-    //                 return res.status(200).json({
-    //                     data,
-    //                     accessToken
-    //                 })
-    //             }
-    //             else {
-    //                 return res.status(401).json({ message: 'Password wrong' })
-    //             }
-    //         }
-    //     }
-    //     catch (err) {
-    //         console.error(err);
-    //         throw new Error('Internal Server Error');
-    //     }
-    // }
+    async loginAdmin(data: AdminDTO, res: Response) {
+        const { user_Name, password } = data
+        try {
+            // Kiểm tra xem email đã tồn tại chưa
+            const loginUser = await this.adminRepo.findOne({ where: { user_Name: user_Name } })
+            if (!loginUser) {
+                return res.status(401).json({ message: 'Email not found' })
+            }
+            else {
+                const myPass = await bcrypt.compare(password, loginUser.password);
+                // console.log(1111, myPass);
+                // giải mã pass
+                if (myPass) {
+                    // console.log(">>>",loginUser); 
+                    //tạo access token
+                    const accessToken = jwt.sign({ ...loginUser }, sceret.sceretKey, { expiresIn: "7d" });
+                    // Token hết hạn trong vòng 7day , vd thêm : 30d ,30m
+                    const accessTokenRefresh = jwt.sign({ ...loginUser }, sceret.sceretKeyRefresh, { expiresIn: "365d" })
+                    // Tạo refreshToken để dự trữ
+                    refreshTokenArr.push(accessTokenRefresh)
+                    // push refresh token vào 1 mảng để lưu trữ
+                    const { password, ...data } = loginUser;
+                    //loại bỏ password ra khỏi phần data trả về frontend,destructuring
+                    res.cookie("accessTokenRefresh", accessTokenRefresh, {//Lưu refreshToken vào cookie khi đăng nhập thành công
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: "none"
+                    })
+                    return res.status(200).json({
+                        data,
+                        accessToken
+                    })
+                }
+                else {
+                    return res.status(401).json({ message: 'Password wrong' })
+                }
+            }
+        }
+        catch (err) {
+            console.error(err);
+            throw new Error('Internal Server Error');
+        }
+    }
     // async refreshToken(req: Request, res: Response) {
     //     // lay refresh token tu cookie
     //     const refreshToken = req.cookies.accessTokenRefresh;

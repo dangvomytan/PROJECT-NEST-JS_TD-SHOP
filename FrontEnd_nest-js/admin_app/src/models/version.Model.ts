@@ -4,14 +4,13 @@ import axiosClient from "../api/AxiosClient";
 export interface IVersion 
 {
     id?: number;
-    product_Id:number
-    version_Name: string;
-    price:number;
-    inventory:number;
-    image:string;
-    specification:string;
+    product_Id?:number
+    version_Name?: string;
+    price?:number;
+    inventory?:number;
+    specification?:string;
     is_Delete?:number;
-    description: string;
+    description?: string;
     createdAt?: string;
 }
 
@@ -24,20 +23,28 @@ export class VersionApi {
      }
      
      static async isdelete(prams:IVersion):Promise<Array<IVersion>> {
-        const url:string = "api/v1/version/is-delete";
+        const url:string = "api/v1/version/disable-ver";
         const res = await axiosClient.patch(url,prams);
         return res.data;
       }
 
-      static async create(prams:IVersion):Promise<Array<IVersion>> {
-        const url:string = "api/v1/version/create";
-        const res = await axiosClient.post(url,prams);
+      static async create(prams:IVersion): Promise<any>{
+        const url:string = "api/v1/version/create-ver";
+        const res = await axiosClient.post(url,prams,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }); 
         return res.data;
       }
 
       static async update(prams:IVersion):Promise<Array<IVersion>> {
-        const url:string = "api/v1/version/update";
-        const res = await axiosClient.patch(url,prams);
+        const url:string = "api/v1/version/update-ver";
+        const res = await axiosClient.patch(url,prams,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }); 
         return res.data;
       }
 

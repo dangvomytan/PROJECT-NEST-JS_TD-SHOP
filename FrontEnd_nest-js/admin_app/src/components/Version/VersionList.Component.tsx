@@ -1,12 +1,12 @@
 import React, { Fragment, useRef, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Toaster, toast } from "react-hot-toast";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IVersion, VersionApi } from "../../models/version.Model";
 import { format, parseISO } from "date-fns";
 
-
 const VersionListComponent: React.FC = () => {
+  const navigate=useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const pro_id = parseInt(searchParams.get('pro') || '');
@@ -18,12 +18,13 @@ const VersionListComponent: React.FC = () => {
   const [totalPage, setTotalPage] = useState(1)
   const [search, setSearch] = useState("")
 
-  const [formData, setFormData] = useState({
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [selectForm, setSelectForm] = useState({
+    id:0,
     product_Id: pro_id,
     version_Name: "",
     price: 0,
     inventory: 0,
-    image: "",
     specification: "",
     description: "",
   });
@@ -37,7 +38,6 @@ const VersionListComponent: React.FC = () => {
   // ham xu li goi du lieu ver
   const handleCallDataVersionApi = async () => {
     const res:any = await VersionApi.getAll({pages,limit,search},pro_id);
-    console.log(res);
     setVersionApi(res.dataVersion)
     setPages(res.pages);
     setTotalPage(res.totalPage);
@@ -50,57 +50,75 @@ const VersionListComponent: React.FC = () => {
   }, [pages,limit]);
 
   //    handle xu ly lay du lieu tu from
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value,
+  //   });
+  // };
 
+  // change input form
+  const handleChange = (e: any) => {
+    const { value } = e.target;
+    setSelectForm((prevDataEdit) => ({
+      ...prevDataEdit,
+      [e.target.name]: value,
+    }));
+  };
+  // change image
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(event.target.files?.[0]);
+  };
+  // tao form dada
+  const formData: any = new FormData();
+  formData.append('id',selectForm?.id)
+  formData.append('product_Id',selectForm.product_Id)
+  formData.append('version_Name',selectForm.version_Name)
+  formData.append('price',selectForm.price)
+  formData.append('inventory',selectForm.inventory)
+  formData.append('specification',selectForm.specification)
+  formData.append('description',selectForm.description)
+  formData.append('image',selectedFile)
+// =================================================
+console.log(selectedFile,555);
+
+  //  Xem ver
+  function clickVer(id: number | undefined): void {
+    navigate(`/version?pro=${id}`)
+  }
   //handle xu ly phan chia hanh dong
   const handleAction = (
     action: "CREATE" | "UPDATE" | "DELETE",
     version?: IVersion
   ) => {
+
     setActionType(action);
-    const newFormData: IVersion = version
-      ? {
-        id: Number(version.id),
-        product_Id: pro_id,
-        version_Name: version.version_Name,
-        price: version.price,
-        inventory: version.inventory,
-        image: version.image,
-        specification: version.specification,
-        description: version.description,
-        is_Delete: 0,
-      }
+    const editData:any = version
+      ? {...version}
       : {
         product_Id: pro_id,
         version_Name: "",
         price: 0,
         inventory: 0,
-        image: "",
         specification: "",
         description: "",
-        is_Delete: 0,
       };
-    console.log(version);
-
-    setFormData(newFormData);
+    setSelectForm(editData);
     setOpen(true);
   };
 
   //handle xu li submit Them/sua/xoa
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (actionType === "DELETE") {
       try {
-        await VersionApi.isdelete(formData);
+        setOpen(false);
+        await VersionApi.isdelete(selectForm);
         toast.success("Delete successfully");
         handleCallDataVersionApi();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -109,6 +127,7 @@ const VersionListComponent: React.FC = () => {
       }
     } else if (actionType === "CREATE") {
       try {
+        setOpen(false);
         await VersionApi.create(formData);
         toast.success("Create successfully");
         handleCallDataVersionApi();
@@ -118,6 +137,7 @@ const VersionListComponent: React.FC = () => {
       }
     } else {
       try {
+        setOpen(false);
         await VersionApi.update(formData);
         toast.success("Update successfully");
         handleCallDataVersionApi();
@@ -126,7 +146,6 @@ const VersionListComponent: React.FC = () => {
         toast.error(error);
       }
     }
-    setOpen(false);
   };
 
 
@@ -222,7 +241,7 @@ const VersionListComponent: React.FC = () => {
                               <input
                                 type="text"
                                 name="version_Name"
-                                value={formData.version_Name}
+                                value={selectForm.version_Name}
                                 onChange={handleChange}
                                 className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                               />
@@ -234,7 +253,7 @@ const VersionListComponent: React.FC = () => {
                               <input
                                 type="number"
                                 name="price"
-                                value={formData.price}
+                                value={selectForm.price}
                                 onChange={handleChange}
                                 className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                               />
@@ -246,7 +265,7 @@ const VersionListComponent: React.FC = () => {
                               <input
                                 type="number"
                                 name="inventory"
-                                value={formData.inventory}
+                                value={selectForm.inventory}
                                 onChange={handleChange}
                                 className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                               />
@@ -258,8 +277,7 @@ const VersionListComponent: React.FC = () => {
                               <input
                                 type="file"
                                 name="image"
-                                // value={formData.image}
-                                onChange={handleChange}
+                                onChange={handleImageChange}
                                 className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                               />
                             </div>
@@ -270,7 +288,7 @@ const VersionListComponent: React.FC = () => {
                               <input
                                 type="text"
                                 name="specification"
-                                value={formData.specification}
+                                value={selectForm.specification}
                                 onChange={handleChange}
                                 className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                               />
@@ -282,7 +300,7 @@ const VersionListComponent: React.FC = () => {
                               <input
                                 type="text"
                                 name="description"
-                                value={formData.description}
+                                value={selectForm.description}
                                 onChange={handleChange}
                                 className="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                               />
@@ -385,8 +403,12 @@ const VersionListComponent: React.FC = () => {
                   return (
                     <tr key={item.id}
                       className="border-b border-gray-200 dark:border-gray-800">
-                      <td className="flex items-center px-6 py-3 text-sm font-medium">
-                        <p className="dark:text-gray-400">{index + 1}</p>
+                      <td className="flex py-5 px-6 text-sm font-medium">
+                        <span className="inline-block px-2 py-1 text-gray-700 dark:text-gray-400">{index + 1}</span>
+                      </td>
+                      <td className="px-6 text-sm font-medium dark:text-gray-400">
+                        <img className="w-20 py-2"
+                        src={item.image}/>
                       </td>
                       <td className="px-6 text-sm font-medium dark:text-gray-400">{item.version_Name}</td>
                       <td className="px-6 text-sm font-medium dark:text-gray-400">{format(parseISO(item.createdAt), "dd/MM/yyyy HH:mm:ss")}</td>
@@ -403,7 +425,7 @@ const VersionListComponent: React.FC = () => {
                       <td className="px-6 " colSpan={2}>
                         <div className="flex ">
                           <span
-                            // onClick={() => clickVer(item.id)}
+                            onClick={() => clickVer(item.id)}
                             className="px-4 py-2 mr-2 text-sm text-gray-600 bg-gray-200 rounded-md dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-800 hover:bg-gray-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                               className="bi bi-three-dots" viewBox="0 0 16 16">
@@ -453,7 +475,6 @@ const VersionListComponent: React.FC = () => {
               </ul>
             </nav>
           </div>
-
         </div>
       </div>
     </>

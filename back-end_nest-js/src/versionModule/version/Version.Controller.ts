@@ -1,7 +1,10 @@
-import { Body, Controller, Get, Param, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Query, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { VersionService } from "./Version.Service";
 import { query } from "express";
 import { VersionDTO } from "../dto/Version.DTO";
+import { multerUpload } from "src/utils/multer";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { VersionEntity } from "../database/Version.Entity";
 
 
 @Controller('api/v1/version')
@@ -62,4 +65,50 @@ export class VersionController {
     getProductWithVersionByIdVer(@Param('id') id: number) {
         return this.versionService.findProductWithVersionByIdVer(id);
     }
+
+    // @Post('/up-image')
+    // @UseInterceptors(
+    //   FileFieldsInterceptor([{ name: 'image', maxCount: 1 }], multerUpload),
+    // )
+    // updateVersion(
+    //   @UploadedFiles() files: any,
+    //   @Body() data: VersionEntity,
+    //   @Param('id') id: number,
+    // ) {
+    //   if (files.image) {
+    //     data.image = files.image[0].path;
+    //   }
+    //   return this.versionService.updateimage(data, id);
+    // }
+
+    @Post('/create-ver')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }], multerUpload),)
+    createVersion(
+        @UploadedFiles() files: any,
+        @Body() data: VersionEntity,
+        // @Param('id') id: number,
+      ) {
+        if (files.image) {
+          data.image = files.image[0].path;
+        }
+        return this.versionService.createVersion(data);
+      }
+
+      @Patch('/update-ver')
+      @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }], multerUpload),)
+      updateVersion(
+          @UploadedFiles() files: any,
+          @Body() data: VersionEntity,
+        ) {
+          if (files.image) 
+          {
+            data.image = files.image[0].path;
+          }
+          return this.versionService.updateVersion(data);
+        }
+
+        @Patch('/disable-ver')
+        disableVersion(@Body() data: VersionEntity,) {
+            return this.versionService.disableVersion(data);
+          }
 }

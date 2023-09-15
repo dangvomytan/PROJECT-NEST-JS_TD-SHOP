@@ -1,6 +1,5 @@
 import axiosClient from "../api/AxiosClient";
 
-
 export interface IAdmin
 {
     id?: number;
@@ -12,6 +11,13 @@ export interface IAdmin
 }
 
 export class AdminApi {
+  static is_Delete: number;
+
+  static async login(param:any):Promise<Array<IAdmin>> {
+    const url:string = "api/v1/admin/login-admin";
+    const res = await axiosClient.post(url,param);
+    return res.data;
+  }
 
      static async getAll():Promise<Array<IAdmin>> {
        const url:string = "api/v1/admin/get-all";

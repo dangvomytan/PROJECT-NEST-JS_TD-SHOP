@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AdminEntity } from "../database/Admin.Entity";
 import { AdminController } from "./Admin.Controller";
-import { AdminService } from "./ADmin.Service";
+import { AdminService } from "./Admin.Service";
 
 @Module({
     imports:[TypeOrmModule.forFeature([AdminEntity])],

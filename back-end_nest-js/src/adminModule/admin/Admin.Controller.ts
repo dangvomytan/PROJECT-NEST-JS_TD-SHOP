@@ -1,9 +1,9 @@
 import { Body, ClassSerializerInterceptor, Controller, Get, Post, Query, Req, Res, UseInterceptors } from "@nestjs/common";
 import { Request, Response } from 'express'
 import { AdminDTO } from "../dto/Admin.dto";
-import { AdminService } from "./ADmin.Service";
+import { AdminService } from "./Admin.Service";
 
-@Controller('api/v1/user')
+@Controller('api/v1/admin')
 
 export class AdminController {
     constructor(
@@ -25,16 +25,16 @@ export class AdminController {
         }
     }
 
-    @Post('/register-user')
-    registerUser(@Body() body:AdminDTO)
+    @Post('/register-admin')
+    registerAdmin(@Body() body:AdminDTO)
     {
-        // return this.AdminService.registerUser(body);
+        return this.AdminService.registerAdmin(body);
     }
 
-    @Post('/login-user')
+    @Post('/login-admin')
     loginUser(@Body() body:AdminDTO, @Res() res:Response)
     {
-        // return this.AdminService.loginUser(body, res);
+        return this.AdminService.loginAdmin(body, res);
     }
     @Post('/refresh-token')
     refreshToken(@Req() req:Request, @Res() res:Response)

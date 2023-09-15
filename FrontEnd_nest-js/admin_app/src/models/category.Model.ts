@@ -12,7 +12,7 @@ export interface ICategory
 export class CategoryApi {
 
      static async getAll():Promise<Array<ICategory>> {
-       const url:string = "api/v1/category/get-all";
+       const url:string = "api/v1/category";
        const res = await axiosClient.get(url);
        return res.data;
      }
